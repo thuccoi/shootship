@@ -1,0 +1,54 @@
+.main::after{
+    content: ' ';
+    display: block;
+    clear: both;
+}
+
+.main .map{
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    float: left;
+}
+
+.main .map .row::after{
+    content: ' ';
+    display: block;
+    clear: both;
+}
+
+.main .map .row .col{
+    float: left;
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.main .map .row .col.ship.ship1 {
+    background-color: #2196F3;
+}
+
+.main .map .row .col.ship.ship2 {
+    background-color: #4CAF50;
+}
+
+.main .map .row .col.ship.broken{
+    background-color: #eee;
+}
+
+.main .map .row .fire{
+    background-color: #eee;
+}
+.main .map .row .fire .cell{
+    background-color: black;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    box-sizing: border-box;
+    line-height: 30px;
+    margin: 10px;
+}
