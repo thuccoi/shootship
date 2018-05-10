@@ -1,5 +1,4 @@
 <?php
-
 include 'resource/game.php';
 include 'solve.php';
 
@@ -87,28 +86,49 @@ function getConfigFile($file = "config1.txt") {
     return $listconfig;
 }
 
-function loadConfig($game) {
-    $cf1s = getConfigFile("config1.txt");
-    $cf2s = getConfigFile("config2.txt");
-
-    foreach ($cf1s as $cf1) {
+function loadConfig($game, $replayfile = FALSE) {
+    if ($replayfile) {
+        $cf = getConfigFile($replayfile);
+        $cf1 = $cf[0];
+        $cf2 = $cf[1];
 
         $cell11 = new Cell($cf1[0], $cf1[1], 0);
         $cell12 = new Cell($cf1[2], $cf1[3], 0);
         $cell13 = new Cell($cf1[4], $cf1[5], 0);
         $config1 = [$cell11, $cell12, $cell13];
-        foreach ($cf2s as $cf2) {
-            $cell21 = new Cell($cf2[0], $cf2[1], 0);
-            $cell22 = new Cell($cf2[2], $cf2[3], 0);
-            $cell23 = new Cell($cf2[4], $cf2[5], 0);
-            $config2 = [$cell21, $cell22, $cell23];
 
-            if ($game->setConfig($config1, $config2)) {
-                return TRUE;
+        $cell21 = new Cell($cf2[0], $cf2[1], 0);
+        $cell22 = new Cell($cf2[2], $cf2[3], 0);
+        $cell23 = new Cell($cf2[4], $cf2[5], 0);
+        $config2 = [$cell21, $cell22, $cell23];
+
+        if ($game->setConfig($config1, $config2)) {
+            return TRUE;
+        }
+
+        return FALSE;
+    } else {
+        $cf1s = getConfigFile("config1.txt");
+        $cf2s = getConfigFile("config2.txt");
+
+        foreach ($cf1s as $cf1) {
+
+            $cell11 = new Cell($cf1[0], $cf1[1], 0);
+            $cell12 = new Cell($cf1[2], $cf1[3], 0);
+            $cell13 = new Cell($cf1[4], $cf1[5], 0);
+            $config1 = [$cell11, $cell12, $cell13];
+            foreach ($cf2s as $cf2) {
+                $cell21 = new Cell($cf2[0], $cf2[1], 0);
+                $cell22 = new Cell($cf2[2], $cf2[3], 0);
+                $cell23 = new Cell($cf2[4], $cf2[5], 0);
+                $config2 = [$cell21, $cell22, $cell23];
+
+                if ($game->setConfig($config1, $config2)) {
+                    return TRUE;
+                }
             }
         }
     }
-
     return FALSE;
 }
 
@@ -126,7 +146,19 @@ function writeDefense($obj, $dir) {
     fclose($handle);
 }
 
-function emptyFile() {
+function emptyFile($game) {
+    $time = time();
+    copy('data.txt', 'history/data_' . $time . '.txt');
+
+    $config1 = $game->ship1->getTextConfig() . PHP_EOL;
+    $config2 = $game->ship2->getTextConfig() . PHP_EOL;
+
+    $hd = fopen('history/config_' . $time . '.txt', 'w');
+    fwrite($hd, $config1);
+    fwrite($hd, $config2);
+
+    fclose($hd);
+
     $handle = fopen('data.txt', 'w');
 
     fclose($handle);
@@ -142,7 +174,7 @@ function detailFile($arr) {
 }
 
 function war($game) {
-    emptyFile();
+    emptyFile($game);
     for ($i = 0; $i < 3000; $i++) {
         $solve1 = toArray(solve1());
 
@@ -197,25 +229,54 @@ function war($game) {
     }
 }
 
-$game = new Game(3);
+function replay($game, $datafile = 'data.txt') {
+    $data = getData($datafile);
 
-if (!loadConfig($game)) {
-    echo 'Cấu hình sai';
-    exit;
+    $maps = [$game->Draw()];
+
+    foreach ($data as $line) {
+        if (isset($line[0]) && isset($line[1])) {
+            if ($line[1] == 'A') {
+                if (isset($line[2]) && isset($line[3])) {
+                    if ($line[0] == 1) {
+                        $game->shipShoot1($line[2], $line[3]);
+                    } elseif ($line[0] == 2) {
+                        $game->shipShoot2($line[2], $line[3]);
+                    }
+                }
+                $maps[] = $game->Draw($line[2], $line[3], $line[0]);
+            } elseif ($line[1] == 'D') {
+                if (isset($line[2])) {
+                    if ($line[0] == 1) {
+                        $game->moveShip1($line[2]);
+                    } elseif ($line[0] == 2) {
+                        $game->moveShip2($line[2]);
+                    }
+                }
+                $maps[] = $game->Draw();
+            }
+        }
+    }
+
+    return $maps;
 }
 
-war($game);
+function stats($game) {
 
-echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
-echo $game->Draw();
+    echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
+    echo $game->Draw();
 
-echo "<pre>";
-echo "config1.txt\n\n";
-detailFile(getData("config1.txt"));
-echo "\n\n\n";
-echo "config2.txt\n\n";
-detailFile(getData("config2.txt"));
-echo "\n\n\n";
-echo "data.txt\n\n";
-detailFile(getData());
+    echo "<pre>";
+    echo "config1.txt\n\n";
+    detailFile(getData("config1.txt"));
+    echo "\n\n\n";
+    echo "config2.txt\n\n";
+    detailFile(getData("config2.txt"));
+    echo "\n\n\n";
+    echo "data.txt\n\n";
+    detailFile(getData());
+    echo "</pre>";
+}
+?>
 
+<link rel="stylesheet" href="asset/style.css">

@@ -51,6 +51,13 @@ class Ship {
         return $num;
     }
 
+    public function getTextConfig() {
+        return "{$this->config[0]->x} {$this->config[0]->y}" .
+                " {$this->config[1]->x} {$this->config[1]->y}" .
+                " {$this->config[2]->x} {$this->config[2]->y}"
+        ;
+    }
+
     public function validConfig() {
         for ($i = 0; $i < $this->n - 1; $i++) {
             for ($j = $i + 1; $j < $this->n; $j++) {
