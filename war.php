@@ -276,20 +276,29 @@ function replay($game, $datafile = 'data.txt') {
     return $maps;
 }
 
-function stats($game) {
+function stats($game, $time = FALSE, $replay = FALSE) {
 
     echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
     // echo $game->Draw();
 
     echo "<pre>";
-    echo "config1.txt\n\n";
-    detailFile(getData("config1.txt"));
-    echo "\n\n\n";
-    echo "config2.txt\n\n";
-    detailFile(getData("config2.txt"));
-    echo "\n\n\n";
-    echo "data.txt\n\n";
-    detailFile(getData());
+    if ($replay == FALSE) {
+        echo "config1.txt\n\n";
+        detailFile(getData("config1.txt"));
+        echo "\n\n\n";
+        echo "config2.txt\n\n";
+        detailFile(getData("config2.txt"));
+
+        echo "\n\n\n";
+        echo "data.txt\n\n";
+        detailFile(getData());
+    } else {
+        echo "config.txt\n\n";
+        detailFile(getData("history/config_{$time}.txt"));
+        echo "\n\n\n";
+        echo "data.txt\n\n";
+        detailFile(getData("history/data_{$time}.txt"));
+    }
     echo "</pre>";
 }
 ?>

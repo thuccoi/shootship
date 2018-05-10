@@ -1,24 +1,30 @@
 var Play = new function __Play() {
     this.isPlay = false;
-
+    this.rp = null;
+    this.idx = 0;
     this.replay = function (canvas) {
-        if (this.isPlay == false) {
+        if (Play.isPlay == false) {
             $("#js-replay").hide();
-            var i = 0;
-            this.isPlay = true;
-            var rp = setInterval(function () {
-                if (play(i, canvas) === false) {
-                    clearInterval(rp);
-                    
+            Play.isPlay = true;
+            Play.rp = setInterval(function () {
+                if (play(Play.idx, canvas) === false) {
+                    Play.pause();
                     $("#js-replay").show();
-                    
                     $("#js-stats").show();
-                    
                     Play.isPlay = false;
                 }
-                i++;
-            }, 10);
+                Play.idx++;
+            }, 500);
         }
+    };
+
+    this.pause = function () {
+        clearInterval(Play.rp);
+    };
+
+    this.continue = function (canvas) {
+        Play.isPlay = false;
+        Play.replay(canvas);
     };
 
     function play(i, canvas) {

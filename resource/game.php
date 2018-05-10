@@ -2,7 +2,6 @@
 
 require 'ship.php';
 
-
 class Game {
 
     public $ship1;
@@ -95,9 +94,9 @@ class Game {
                 break;
             }
         }
-
-        $this->ship2->setConfig($config);
-
+        if ($flat == TRUE) {
+            $this->ship2->setConfig($config);
+        }
         return $flat;
     }
 
@@ -141,9 +140,9 @@ class Game {
                 break;
             }
         }
-
-        $this->ship1->setConfig($config);
-
+        if ($flat == TRUE) {
+            $this->ship1->setConfig($config);
+        }
         return $flat;
     }
 
@@ -253,4 +252,3 @@ class Game {
     }
 
 }
-
