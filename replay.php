@@ -16,31 +16,9 @@ if ($time > 0) {
 ?>
 
 <div id="js-draw"></div>
-<button onclick="replay(0);">Xem lại</button>
+<button onclick="Play.replay('#js-draw');">Xem lại</button>
 <script>
     var maps = <?= json_encode($maps) ?>;
-    var i = 0;
-
-    function replay() {
-
-        var rp = setInterval(function () {
-            
-            if (play(i) === false) {
-                clearInterval(rp);
-            }
-            i++;
-        }, 100);
-    }
-
-    function play(i) {
-        var length = maps.length;
-        if (i < length) {
-            $("#js-draw").html(maps[i]);
-            return true;
-        }
-        return false;
-    }
-
 </script>
 
 <?php

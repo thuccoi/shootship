@@ -281,3 +281,4 @@ function stats($game) {
 
 <link rel="stylesheet" href="asset/style.css">
 <script src="asset/jquery-3.3.1.min.js"></script>
+<script src="asset/play.js"></script>
