@@ -1,7 +1,10 @@
-.main::after{
-    content: ' ';
-    display: block;
-    clear: both;
+
+.stats{
+    float: right;
+    height: 80vh;
+    border: 1px solid #333;
+    padding: 10px;
+    overflow-y: scroll;
 }
 
 .main .map{

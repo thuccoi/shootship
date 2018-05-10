@@ -24,6 +24,8 @@ if ($time > 0) {
     var maps = <?= json_encode($maps) ?>;
 </script>
 
-<?php
-stats($game);
-?>
+<div id="js-stats" class="stats" >
+    <?php
+    stats($game);
+    ?>
+</div>

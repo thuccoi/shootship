@@ -28,7 +28,7 @@ $maps = replay($rpgame, "data.txt");
     Play.replay('#js-draw');
 </script>
 
-<div id="js-stats" style="display: none;">
+<div id="js-stats" class="stats" style="display: none;">
     <?php
     stats($game);
     ?>
