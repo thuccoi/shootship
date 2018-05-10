@@ -3,13 +3,13 @@ var Play = new function __Play() {
 
     this.replay = function (canvas) {
         if (this.isPlay == false) {
-//            $("#js-replay").hide();
+            $("#js-replay").hide();
             var i = 0;
             this.isPlay = true;
             var rp = setInterval(function () {
                 if (play(i, canvas) === false) {
                     clearInterval(rp);
-//                    $("#js-replay").show();
+                    $("#js-replay").show();
                     Play.isPlay = false;
                 }
                 i++;
