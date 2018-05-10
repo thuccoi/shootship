@@ -9,7 +9,11 @@ var Play = new function __Play() {
             var rp = setInterval(function () {
                 if (play(i, canvas) === false) {
                     clearInterval(rp);
+                    
                     $("#js-replay").show();
+                    
+                    $("#js-stats").show();
+                    
                     Play.isPlay = false;
                 }
                 i++;

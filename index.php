@@ -25,8 +25,11 @@ $maps = replay($rpgame, "data.txt");
 <button id="js-replay" onclick="Play.replay('#js-draw');">Xem lại</button>
 <script>
     var maps = <?= json_encode($maps) ?>;
+    Play.replay('#js-draw');
 </script>
 
-<?php
-stats($game);
-?>
+<div id="js-stats" style="display: none;">
+    <?php
+    stats($game);
+    ?>
+</div>
