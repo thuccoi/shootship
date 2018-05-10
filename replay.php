@@ -12,11 +12,14 @@ if ($time > 0) {
 
 
     $maps = replay($game, "history/data_{$time}.txt");
+} else {
+    echo "Hãy nhập vào thời gian đã đấu: ?time=xxx";
+    exit;
 }
 ?>
 
 <div id="js-draw"></div>
-<button onclick="Play.replay('#js-draw');">Xem lại</button>
+<button id="js-replay" onclick="Play.replay('#js-draw');">Xem lại</button>
 <script>
     var maps = <?= json_encode($maps) ?>;
 </script>

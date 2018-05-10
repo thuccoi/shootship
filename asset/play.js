@@ -1,14 +1,20 @@
 var Play = new function __Play() {
+    this.isPlay = false;
 
     this.replay = function (canvas) {
-        var i = 0;
-        var rp = setInterval(function () {
-
-            if (play(i, canvas) === false) {
-                clearInterval(rp);
-            }
-            i++;
-        }, 100);
+        if (this.isPlay == false) {
+//            $("#js-replay").hide();
+            var i = 0;
+            this.isPlay = true;
+            var rp = setInterval(function () {
+                if (play(i, canvas) === false) {
+                    clearInterval(rp);
+//                    $("#js-replay").show();
+                    Play.isPlay = false;
+                }
+                i++;
+            }, 100);
+        }
     };
 
     function play(i, canvas) {
