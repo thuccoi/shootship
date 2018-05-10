@@ -1,6 +1,6 @@
 <?php
 
-function solve1($file = "data.txt") {
+function solve1($file = "data.txt", $player = 1) {
     $r = rand(0, 123);
     if ($r % 2 == 1) {
         $x = rand(0, 10);
@@ -22,7 +22,7 @@ function solve1($file = "data.txt") {
     }
 }
 
-function solve2($file = "data.txt") {
+function solve2($file = "data.txt", $player = 2) {
     $r = rand(0, 123);
     if ($r % 2 == 1) {
         $x = rand(0, 10);
@@ -43,4 +43,3 @@ function solve2($file = "data.txt") {
         return "D {$dir}";
     }
 }
-
