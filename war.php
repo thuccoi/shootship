@@ -264,7 +264,7 @@ function replay($game, $datafile = 'data.txt') {
 function stats($game) {
 
     echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
-    echo $game->Draw();
+   // echo $game->Draw();
 
     echo "<pre>";
     echo "config1.txt\n\n";
@@ -280,3 +280,4 @@ function stats($game) {
 ?>
 
 <link rel="stylesheet" href="asset/style.css">
+<script src="asset/jquery-3.3.1.min.js"></script>
