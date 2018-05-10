@@ -37,7 +37,16 @@ include 'solve.php';
 
 
 function toArray($line) {
-    return array_map('trim', array_filter(explode(' ', $line)));
+    $line = str_replace('0', '*', $line);
+    $data = array_map('trim', array_filter(explode(' ', $line)));
+    $rs = [];
+    foreach ($data as $val) {
+        if ($val == '*') {
+            $val = 0;
+        }
+        $rs[] = $val;
+    }
+    return $rs;
 }
 
 function getData($file = "data.txt") {
@@ -45,10 +54,14 @@ function getData($file = "data.txt") {
     $handle = fopen($file, "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
+            $line = str_replace('0', '*', $line);
             $cv = array_map('trim', array_filter(explode(' ', $line)));
             $arr = [];
             foreach ($cv as $v) {
                 if ($v) {
+                    if ($v == '*') {
+                        $v = 0;
+                    }
                     $arr[] = $v;
                 }
             }
@@ -134,6 +147,7 @@ function loadConfig($game, $replayfile = FALSE) {
 
 function writeAttack($obj, $x, $y, $status = 'F') {
     $data = "{$obj} A {$x} {$y} {$status}" . PHP_EOL;
+    $data = str_replace('*', '', $data);
     $handle = fopen('data.txt', 'a');
     fwrite($handle, $data);
     fclose($handle);
@@ -141,6 +155,7 @@ function writeAttack($obj, $x, $y, $status = 'F') {
 
 function writeDefense($obj, $dir) {
     $data = "{$obj} D {$dir}" . PHP_EOL;
+    $data = str_replace('*', '', $data);
     $handle = fopen('data.txt', 'a');
     fwrite($handle, $data);
     fclose($handle);
@@ -264,7 +279,7 @@ function replay($game, $datafile = 'data.txt') {
 function stats($game) {
 
     echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
-   // echo $game->Draw();
+    // echo $game->Draw();
 
     echo "<pre>";
     echo "config1.txt\n\n";

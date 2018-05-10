@@ -17,7 +17,7 @@ var Play = new function __Play() {
                     Play.isPlay = false;
                 }
                 i++;
-            }, 100);
+            }, 10);
         }
     };
 
