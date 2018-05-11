@@ -204,6 +204,7 @@ function solve11($file = "data.txt", $player = 1) {
     if (!function_exists('_Thor_moveHit')) {
 
         function _Thor_moveHit($data, $hit, $player) {
+           
             $rs = [];
             for ($i = count($data); $i >= 0; $i--) {
                 if (isset($data[$i])) {
@@ -211,7 +212,7 @@ function solve11($file = "data.txt", $player = 1) {
 
                     if (isset($dt[0]) && isset($dt[1])) {
                         if (isset($dt[4])) {
-                            if ($dt[4] == 'T' && $dt[1] == 'A' && $dt[0] == $player) {
+                            if ($hit->x == $dt[2] && $hit->y == $dt[3] && $dt[4] == 'T' && $dt[1] == 'A' && $dt[0] == $player) {
                                 break;
                             }
                         }
@@ -260,12 +261,13 @@ function solve11($file = "data.txt", $player = 1) {
             if (count($hits) == 0) {
                 return -1;
             }
+           
 
             $newhit = [];
             foreach ($hits as $hit) {
                 $newhit[] = _Thor_moveHit($data, $hit, $player);
             }
-
+           
             return $newhit;
         }
 
@@ -328,7 +330,7 @@ function solve11($file = "data.txt", $player = 1) {
 
         function _Thor_rangeShoot($data, $player, $sizemap) {
             $hits = _Thor_getHasHit($data, $player);
-
+           
             $rss = [];
             foreach ($hits as $hit) {
                 $rs = _Thor_range($hit, $data, $sizemap, $player);
@@ -336,7 +338,7 @@ function solve11($file = "data.txt", $player = 1) {
                     $rss[] = $r;
                 }
             }
-
+          
             $hashit = _Thor_getDataBeforDirect($data, $player);
 
             $rs = [];
@@ -451,6 +453,7 @@ function solve11($file = "data.txt", $player = 1) {
                         ];
                     }
                 }
+
                 $x = _Thor_positionRandom($sizemap);
                 $y = _Thor_positionRandom($sizemap);
 
