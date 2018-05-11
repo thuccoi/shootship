@@ -129,32 +129,67 @@ function solve11($file = "data.txt", $player = 1) {
         }
 
     }
+
+    if (!function_exists('_Thor_moveArray')) {
+
+        function _Thor_moveArray($arr, $dir) {
+            $newarr = [];
+            foreach ($arr as $val) {
+                switch ($dir) {
+                    case 'T':
+                        $val->x--;
+                        break;
+                    case 'R':
+                        $val->y++;
+                        break;
+                    case 'B':
+                        $val->x++;
+                        break;
+                    case 'L':
+                        $val->y--;
+                        break;
+                }
+                $newarr[] = (object) [
+                            "x" => $val->x,
+                            "y" => $val->y
+                ];
+            }
+
+            return $newarr;
+        }
+
+    }
+
     if (!function_exists('_Thor_getDataBeforDirect')) {
 
-        function _Thor_getDataBeforDirect($data, $player) {
+        function _Thor_getDataBeforDirect($data, $player, $sizemap) {
 
             $rs = [];
-            for ($i = count($data); $i >= 0; $i--) {
-                if (isset($data[$i])) {
-                    $dt = $data[$i];
-
-                    if (isset($dt[0]) && isset($dt[1])) {
-                        if ($dt[1] == 'D' && $dt[0] != $player) {
-                            break;
-                        }
-                        if ($dt[0] == $player && $dt[1] == 'A') {
-                            if (isset($dt[2]) && isset($dt[3])) {
-                                $rs[] = (object) [
-                                            "x" => $dt[2],
-                                            "y" => $dt[3]
-                                ];
-                            }
+            foreach ($data as $dt) {
+                if (isset($dt[0]) && isset($dt[1])) {
+                    if ($dt[1] == 'D' && $dt[0] != $player) {
+                        //move follow ship deferent
+                        $rs = _Thor_moveArray($rs, $dt[2]);
+                    }
+                    if ($dt[0] == $player && $dt[1] == 'A') {
+                        if (isset($dt[2]) && isset($dt[3])) {
+                            $rs[] = (object) [
+                                        "x" => $dt[2],
+                                        "y" => $dt[3]
+                            ];
                         }
                     }
                 }
             }
 
-            return $rs;
+            $newrs = [];
+            foreach ($rs as $val) {
+                if ($val->x >= 0 && $val->x < $sizemap && $val->y >= 0 && $val->y < $sizemap) {
+                    $newrs[] = $val;
+                }
+            }
+
+            return $newrs;
         }
 
     }
@@ -162,13 +197,16 @@ function solve11($file = "data.txt", $player = 1) {
 
         //shooted
         function _Thor_setShooted($data, $player, $map, $sizemap) {
-            $rs = _Thor_getDataBeforDirect($data, $player);
+            $rs = _Thor_getDataBeforDirect($data, $player, $sizemap);
+
+
             foreach ($rs as $point) {
                 $sm = _Thor_shootInMap($point->y + $point->x * $sizemap, $map);
                 if ($sm != -1) {
                     $map = $sm;
                 }
             }
+
             return $map;
         }
 
@@ -204,7 +242,7 @@ function solve11($file = "data.txt", $player = 1) {
     if (!function_exists('_Thor_moveHit')) {
 
         function _Thor_moveHit($data, $hit, $player) {
-           
+
             $rs = [];
             for ($i = count($data); $i >= 0; $i--) {
                 if (isset($data[$i])) {
@@ -261,13 +299,13 @@ function solve11($file = "data.txt", $player = 1) {
             if (count($hits) == 0) {
                 return -1;
             }
-           
+
 
             $newhit = [];
             foreach ($hits as $hit) {
                 $newhit[] = _Thor_moveHit($data, $hit, $player);
             }
-           
+
             return $newhit;
         }
 
@@ -330,7 +368,7 @@ function solve11($file = "data.txt", $player = 1) {
 
         function _Thor_rangeShoot($data, $player, $sizemap) {
             $hits = _Thor_getHasHit($data, $player);
-           
+
             $rss = [];
             foreach ($hits as $hit) {
                 $rs = _Thor_range($hit, $data, $sizemap, $player);
@@ -338,8 +376,8 @@ function solve11($file = "data.txt", $player = 1) {
                     $rss[] = $r;
                 }
             }
-          
-            $hashit = _Thor_getDataBeforDirect($data, $player);
+
+            $hashit = _Thor_getDataBeforDirect($data, $player, $sizemap);
 
             $rs = [];
             foreach ($rss as $val) {
@@ -408,6 +446,7 @@ function solve11($file = "data.txt", $player = 1) {
             if (count($data) > 0) {
 
                 $broken = _Thor_isBroken($data, $player);
+
                 if ($broken != FALSE) {
                     $dirs = ['T', 'R', 'B', 'L'];
                     $dir = $dirs[_Thor_positionRandom(4)];
@@ -463,6 +502,7 @@ function solve11($file = "data.txt", $player = 1) {
                             "y" => $y
                 ];
             } else {
+
                 $map = _Thor_getMapEmpty($sizemap);
                 $map = _Thor_setShooted($data, $player, $map, $sizemap);
                 $am = [];
