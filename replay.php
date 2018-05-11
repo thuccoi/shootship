@@ -1,6 +1,11 @@
 <?php
 include 'war.php';
 
+$speed = 100;
+if (isset($_GET['speed'])) {
+    $speed = $_GET['speed'];
+}
+
 $time = $_GET['time'];
 if ($time > 0) {
     $game = new Game(3);
@@ -11,7 +16,10 @@ if ($time > 0) {
     }
 
 
-    $maps = replay($game, "history/data_{$time}.txt");
+    $replay = replay($game, "history/data_{$time}.txt");
+    $maps = $replay->map;
+    $ship1s = $replay->ship1;
+    $ship2s = $replay->ship2;
 } else {
     echo "Hãy nhập vào thời gian đã đấu: ?time=xxx";
     exit;
@@ -23,7 +31,10 @@ if ($time > 0) {
 <button id="js-pause" onclick="Play.pause();">Tạm dừng</button>
 <button id="js-continue" onclick="Play.continue('#js-draw');">Tiếp tục</button>
 <script>
+    var speed = <?= $speed ?>;
     var maps = <?= json_encode($maps) ?>;
+    var ship1s = <?= json_encode($ship1s) ?>;
+    var ship2s = <?= json_encode($ship2s) ?>;
 </script>
 
 <div id="js-stats" class="stats" >

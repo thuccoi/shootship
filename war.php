@@ -248,10 +248,12 @@ function replay($game, $datafile = 'data.txt') {
     $data = getData($datafile);
 
     $maps = [$game->Draw()];
-
+    $ship1s = [$game->ship1->getConfig()];
+    $ship2s = [$game->ship2->getConfig()];
     foreach ($data as $line) {
         if (isset($line[0]) && isset($line[1])) {
             if ($line[1] == 'A') {
+
                 if (isset($line[2]) && isset($line[3])) {
                     if ($line[0] == 1) {
                         $game->shipShoot1($line[2], $line[3]);
@@ -259,7 +261,10 @@ function replay($game, $datafile = 'data.txt') {
                         $game->shipShoot2($line[2], $line[3]);
                     }
                 }
+
                 $maps[] = $game->Draw($line[2], $line[3], $line[0]);
+                $ship1s[] = $game->ship1->getConfig();
+                $ship2s[] = $game->ship2->getConfig();
             } elseif ($line[1] == 'D') {
                 if (isset($line[2])) {
                     if ($line[0] == 1) {
@@ -269,11 +274,17 @@ function replay($game, $datafile = 'data.txt') {
                     }
                 }
                 $maps[] = $game->Draw();
+                $ship1s[] = $game->ship1->getConfig();
+                $ship2s[] = $game->ship2->getConfig();
             }
         }
     }
 
-    return $maps;
+    return (object) [
+                "map" => $maps,
+                "ship1" => $ship1s,
+                "ship2" => $ship2s
+    ];
 }
 
 function stats($game, $time = FALSE, $replay = FALSE) {

@@ -12,6 +12,14 @@ class Cell {
         $this->status = $status;
     }
 
+    public function getCell() {
+        return (object) [
+                    "x" => $this->x,
+                    "y" => $this->y,
+                    "status" => $this->status
+        ];
+    }
+
     public function setCell($cell) {
         if (!isset($cell->x) || !isset($cell->y) || !isset($cell->status)) {
             return false;
@@ -31,7 +39,7 @@ class Cell {
     }
 
     public function checkMove($dir, $sizemap) {
-        
+
         switch ($dir) {
             case 'T':
             case 't':

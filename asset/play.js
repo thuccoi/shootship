@@ -7,18 +7,20 @@ var Play = new function __Play() {
             $("#js-replay").hide();
             Play.isPlay = true;
             Play.rp = setInterval(function () {
-                if (play(Play.idx, canvas) === false) {
+                if (play(Play.idx, canvas) == false) {
                     Play.pause();
                     $("#js-replay").show();
                     $("#js-stats").show();
                     Play.isPlay = false;
                 }
                 Play.idx++;
-            }, 500);
+            }, speed);
         }
     };
 
-    this.pause = function () {
+    this.pause = function (i) {
+        console.log(ship1s[Play.idx - 1]);
+        console.log(ship2s[Play.idx - 1]);
         clearInterval(Play.rp);
     };
 

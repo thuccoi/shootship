@@ -84,19 +84,20 @@ class Game {
             return FALSE;
         }
 
-        $config = $this->ship2->config;
+        $config = [];
 
         $flat = FALSE;
+        $cf = $this->ship2->getConfig();
         for ($i = 0; $i < $this->ship2->n; $i++) {
-            if ($config[$i]->status == 0 && $config[$i]->x == $x && $config[$i]->y == $y) {
-                $config[$i]->status = 1;
+            if ($cf[$i]->status == 0 && $cf[$i]->x == $x && $cf[$i]->y == $y) {
+                $cf[$i]->status = 1;
                 $flat = TRUE;
-                break;
             }
+            $config[] = $cf[$i];
         }
-        if ($flat == TRUE) {
-            $this->ship2->setConfig($config);
-        }
+
+        $this->ship2->setConfig($config);
+
         return $flat;
     }
 
@@ -130,19 +131,20 @@ class Game {
             return FALSE;
         }
 
-        $config = $this->ship1->config;
+
+        $config = [];
 
         $flat = FALSE;
+        $cf = $this->ship1->getConfig();
         for ($i = 0; $i < $this->ship1->n; $i++) {
-            if ($config[$i]->status == 0 && $config[$i]->x == $x && $config[$i]->y == $y) {
-                $config[$i]->status = 1;
+            if ($cf[$i]->status == 0 && $cf[$i]->x == $x && $cf[$i]->y == $y) {
+                $cf[$i]->status = 1;
                 $flat = TRUE;
-                break;
             }
+            $config[] = $cf[$i];
         }
-        if ($flat == TRUE) {
-            $this->ship1->setConfig($config);
-        }
+
+        $this->ship1->setConfig($config);
         return $flat;
     }
 
@@ -152,9 +154,7 @@ class Game {
         }
 
         if ($this->validConfig() == FALSE) {
-            if (!$this->ship1->move($this->revert($dir), $this->sizemap)) {
-                return FALSE;
-            }
+            $this->ship1->move($this->revert($dir), $this->sizemap);
             return FALSE;
         }
 

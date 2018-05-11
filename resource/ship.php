@@ -14,8 +14,18 @@ class Ship {
         }
     }
 
+    public function getConfig() {
+        $config = [];
+        for ($i = 0; $i < $this->n; $i++) {
+            if (isset($this->config[$i])) {
+                $config[] = $this->config[$i]->getCell();
+            }
+        }
+        return $config;
+    }
+
     public function setConfig($config = []) {
-        if (count($config) == $this->n) {
+        if (count($config) >= $this->n) {
             for ($i = 0; $i < $this->n; $i++) {
                 if (!$this->config[$i]->setCell($config[$i])) {
                     return FALSE;
