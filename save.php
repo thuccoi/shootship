@@ -1,6 +1,5 @@
 <?php
 
-
 function solve11($file = "data.txt", $player = 1) {
     //sizemap data
     $sizemap = 10;
@@ -228,24 +227,29 @@ function solve11($file = "data.txt", $player = 1) {
 
             $rs = array_reverse($rs);
 
+            $newhit = (object) [
+                        'x' => $hit->x,
+                        'y' => $hit->y
+            ];
+
             foreach ($rs as $dir) {
                 switch ($dir) {
                     case 'T':
-                        $hit->x = $hit->x - 1;
+                        $newhit->x = $newhit->x - 1;
                         break;
                     case 'R':
-                        $hit->y = $hit->y + 1;
+                        $newhit->y = $newhit->y + 1;
                         break;
                     case 'B':
-                        $hit->x = $hit->x + 1;
+                        $newhit->x = $newhit->x + 1;
                         break;
                     case 'L':
-                        $hit->y = $hit->y - 1;
+                        $newhit->y = $newhit->y - 1;
                         break;
                 }
             }
 
-            return $hit;
+            return $newhit;
         }
 
     }
@@ -324,7 +328,7 @@ function solve11($file = "data.txt", $player = 1) {
 
         function _Thor_rangeShoot($data, $player, $sizemap) {
             $hits = _Thor_getHasHit($data, $player);
-           
+
             $rss = [];
             foreach ($hits as $hit) {
                 $rs = _Thor_range($hit, $data, $sizemap, $player);
@@ -332,7 +336,7 @@ function solve11($file = "data.txt", $player = 1) {
                     $rss[] = $r;
                 }
             }
-           
+
             $hashit = _Thor_getDataBeforDirect($data, $player);
 
             $rs = [];
@@ -493,7 +497,6 @@ function solve11($file = "data.txt", $player = 1) {
         return "D {$shoot->dir}";
     }
 }
-
 
 function solve1($file = "data.txt", $player = 1) {
     //sizemap data
