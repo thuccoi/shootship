@@ -39,7 +39,11 @@ class Cell {
     }
 
     public function checkMove($dir, $sizemap) {
-
+        
+        if ($this->status == 1) {
+            return TRUE;
+        }
+        
         switch ($dir) {
             case 'T':
             case 't':

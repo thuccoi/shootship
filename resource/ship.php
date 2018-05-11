@@ -89,7 +89,7 @@ class Ship {
 
         $config = [];
         for ($i = 0; $i < $this->n; $i++) {
-            $cf = $this->config[$i];
+            $cf = $this->config[$i]->getCell();
             switch ($dir) {
                 case 'T':
                 case 't':
