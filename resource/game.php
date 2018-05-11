@@ -32,9 +32,9 @@ class Game {
         $config1 = $this->ship1->config;
         $config2 = $this->ship2->config;
         for ($i = 0; $i < $this->ship1->n; $i++) {
-            for ($j = 0; $j < $this->ship1->n; $j++) {
+            for ($j = 0; $j < $this->ship2->n; $j++) {
                 if ($config1[$i]->isEqualsPosition($config2[$j])) {
-                    if ($config1[$i]->status == 0 && $config2[$i]->status == 0) {
+                    if ($config1[$i]->status == 0 && $config2[$j]->status == 0) {
                         //cell broken
                         return FALSE;
                     }
@@ -167,9 +167,7 @@ class Game {
         }
 
         if ($this->validConfig() == FALSE) {
-            if (!$this->ship2->move($this->revert($dir), $this->sizemap)) {
-                return FALSE;
-            }
+            $this->ship2->move($this->revert($dir), $this->sizemap);
             return FALSE;
         }
 
