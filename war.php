@@ -292,6 +292,32 @@ function stats($game, $time = FALSE, $replay = FALSE) {
     echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
     // echo $game->Draw();
 
+    $inputdata = getData();
+    echo "<p>Tổng số bước là: " . count($inputdata) . " </p>";
+    $nums = array_reduce($inputdata, function($sum, $e) {
+        if ($e[0] == 1 && $e[1] == 'A') {
+            $sum->ship1_A ++;
+        } elseif ($e[0] == 2 && $e[1] == 'A') {
+            $sum->ship2_A++;
+        }
+        
+        if ($e[0] == 1 && $e[1] == 'D') {
+            $sum->ship1_D ++;
+        } elseif ($e[0] == 2 && $e[1] == 'D') {
+            $sum->ship2_D++;
+        }
+        
+
+        return $sum;
+    }, (object) ['ship1_A' => 0, 'ship2_A' => 0, 'ship1_D' => 0, 'ship2_D' => 0]);
+
+    echo "<p>Tàu 1 bắn hết: {$nums->ship1_A} phát</p>";
+    echo "<p>Tàu 2 bắn hết: {$nums->ship2_A} phát</p>";
+    
+
+    echo "<p>Tàu 1 chạy: {$nums->ship1_D} bước</p>";
+    echo "<p>Tàu 2 chạy: {$nums->ship2_D} bước</p>";
+    
     echo "<pre>";
     if ($replay == FALSE) {
         echo "config1.txt\n\n";

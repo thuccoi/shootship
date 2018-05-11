@@ -33,6 +33,7 @@ $ship2s = $replay->ship2;
 <button id="js-replay" onclick="Play.wreplay('#js-draw');">Xem lại</button>
 <button id="js-pause" onclick="Play.pause();">Tạm dừng</button>
 <button id="js-continue" onclick="Play.continue('#js-draw');">Tiếp tục</button>
+
 <script>
     var speed = <?= $speed ?>;
     var maps = <?= json_encode($maps) ?>;
