@@ -30,7 +30,7 @@ $ship2s = $replay->ship2;
 
 
 <div id="js-draw"></div>
-<button id="js-replay" onclick="Play.replay('#js-draw');">Xem lại</button>
+<button id="js-replay" onclick="Play.wreplay('#js-draw');">Xem lại</button>
 <button id="js-pause" onclick="Play.pause();">Tạm dừng</button>
 <button id="js-continue" onclick="Play.continue('#js-draw');">Tiếp tục</button>
 <script>
