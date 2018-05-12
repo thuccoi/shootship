@@ -511,9 +511,20 @@ function solveThor($file = "data.txt", $player = 1) {
                         $am[] = $val;
                     }
                 }
+
+
+//                if (rand(0, 1213232) % 10 == 3) {
+//                    $dirs = ['T', 'R', 'B', 'L'];
+//                    $dir = $dirs[_Thor_positionRandom(4)];
+//                    
+//                    return (object) [
+//                                "status" => 'D',
+//                                "dir" => $dir
+//                    ];
+//                }
                 
                 $rd = _Thor_positionRandom(count($am));
-             
+
                 return (object) [
                             "status" => "A",
                             'x' => $am[$rd]->x,
@@ -540,4 +551,3 @@ function solveThor($file = "data.txt", $player = 1) {
         return "D {$shoot->dir}";
     }
 }
-

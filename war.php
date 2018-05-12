@@ -67,9 +67,10 @@ function getData($file = "data.txt") {
             }
             $inputfile[] = $arr;
         }
+        fclose($handle);
     }
 
-    fclose($handle);
+
     return $inputfile;
 }
 
@@ -130,23 +131,23 @@ function randomPosition($game) {
             $val->x += $x;
             $val->y += $y;
 
-            $line[] =  $val->x;
-            $line[] =  $val->y;
+            $line[] = $val->x;
+            $line[] = $val->y;
         }
 
         $npos[] = $line;
     }
 
     $rp = rand(0, 1243434344) % count($npos);
-   
-    return implode(" ", $npos[$rp]);
+
+    return implode(" ", $npos[$rp]).' ';
 }
 
 function writeRandomConfig($game) {
     $line1 = randomPosition($game) . PHP_EOL;
     $line2 = randomPosition($game) . PHP_EOL;
     $line3 = randomPosition($game) . PHP_EOL;
-   
+
     $handle = fopen('e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt', 'w');
     fwrite($handle, $line1);
     fwrite($handle, $line2);
@@ -388,10 +389,10 @@ function stats($game, $time = FALSE, $replay = FALSE) {
     echo "<pre>";
     if ($replay == FALSE) {
         echo "config1.txt\n\n";
-        detailFile(getData("config1.txt"));
+        detailFile(getData("6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt"));
         echo "\n\n\n";
         echo "config2.txt\n\n";
-        detailFile(getData("config2.txt"));
+        detailFile(getData("e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt"));
 
         echo "\n\n\n";
         echo "data.txt\n\n";
