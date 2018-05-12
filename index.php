@@ -8,6 +8,8 @@ if (isset($_GET['speed'])) {
 
 $game = new Game(3);
 
+writeRandomConfig($game);
+
 if (!loadConfig($game)) {
     echo 'Cấu hình sai';
     exit;

@@ -99,6 +99,72 @@ function getConfigFile($file = "config1.txt") {
     return $listconfig;
 }
 
+function randomPosition($game) {
+    $pos = [
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 1], (object) ['x' => 2, 'y' => 2]],
+        [(object) ['x' => 0, 'y' => 2], (object) ['x' => 1, 'y' => 1], (object) ['x' => 2, 'y' => 0]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 0], (object) ['x' => 0, 'y' => 1]],
+        [(object) ['x' => 1, 'y' => 0], (object) ['x' => 0, 'y' => 1], (object) ['x' => 1, 'y' => 1]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 0, 'y' => 1], (object) ['x' => 1, 'y' => 1]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 0], (object) ['x' => 1, 'y' => 1]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 0, 'y' => 1], (object) ['x' => 1, 'y' => 2]],
+        [(object) ['x' => 1, 'y' => 0], (object) ['x' => 1, 'y' => 1], (object) ['x' => 0, 'y' => 2]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 1], (object) ['x' => 0, 'y' => 2]],
+        [(object) ['x' => 1, 'y' => 0], (object) ['x' => 0, 'y' => 1], (object) ['x' => 1, 'y' => 2]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 1], (object) ['x' => 2, 'y' => 0]],
+        [(object) ['x' => 0, 'y' => 1], (object) ['x' => 1, 'y' => 0], (object) ['x' => 2, 'y' => 1]],
+        [(object) ['x' => 0, 'y' => 1], (object) ['x' => 0, 'y' => 1], (object) ['x' => 0, 'y' => 2]],
+        [(object) ['x' => 0, 'y' => 0], (object) ['x' => 1, 'y' => 0], (object) ['x' => 2, 'y' => 0]]
+    ];
+
+
+    $pp = rand(0, 213213223) % (($game->sizemap - 3) * ($game->sizemap - 3));
+
+    $x = (int) ($pp / $game->sizemap);
+    $y = $pp - $x * $game->sizemap;
+
+    $npos = [];
+    foreach ($pos as $arr) {
+        $line = [];
+        foreach ($arr as $val) {
+            $val->x += $x;
+            $val->y += $y;
+
+            $line[] =  $val->x;
+            $line[] =  $val->y;
+        }
+
+        $npos[] = $line;
+    }
+
+    $rp = rand(0, 1243434344) % count($npos);
+   
+    return implode(" ", $npos[$rp]);
+}
+
+function writeRandomConfig($game) {
+    $line1 = randomPosition($game) . PHP_EOL;
+    $line2 = randomPosition($game) . PHP_EOL;
+    $line3 = randomPosition($game) . PHP_EOL;
+   
+    $handle = fopen('e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt', 'w');
+    fwrite($handle, $line1);
+    fwrite($handle, $line2);
+    fwrite($handle, $line3);
+    fclose($handle);
+
+    $line1 = randomPosition($game) . PHP_EOL;
+    $line2 = randomPosition($game) . PHP_EOL;
+    $line3 = randomPosition($game) . PHP_EOL;
+
+
+    $handle = fopen('6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt', 'w');
+    fwrite($handle, $line1);
+    fwrite($handle, $line2);
+    fwrite($handle, $line3);
+    fclose($handle);
+}
+
 function loadConfig($game, $replayfile = FALSE) {
     if ($replayfile) {
         $cf = getConfigFile($replayfile);
@@ -121,8 +187,8 @@ function loadConfig($game, $replayfile = FALSE) {
 
         return FALSE;
     } else {
-        $cf1s = getConfigFile("config1.txt");
-        $cf2s = getConfigFile("config2.txt");
+        $cf1s = getConfigFile("e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt");
+        $cf2s = getConfigFile("6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt");
 
         foreach ($cf1s as $cf1) {
 
@@ -190,6 +256,7 @@ function detailFile($arr) {
 
 function war($game) {
     emptyFile($game);
+
     for ($i = 0; $i < 3000; $i++) {
         $solve1 = toArray(solve1());
 
@@ -300,24 +367,24 @@ function stats($game, $time = FALSE, $replay = FALSE) {
         } elseif ($e[0] == 2 && $e[1] == 'A') {
             $sum->ship2_A++;
         }
-        
+
         if ($e[0] == 1 && $e[1] == 'D') {
             $sum->ship1_D ++;
         } elseif ($e[0] == 2 && $e[1] == 'D') {
             $sum->ship2_D++;
         }
-        
+
 
         return $sum;
     }, (object) ['ship1_A' => 0, 'ship2_A' => 0, 'ship1_D' => 0, 'ship2_D' => 0]);
 
     echo "<p>Tàu 1 bắn hết: {$nums->ship1_A} phát</p>";
     echo "<p>Tàu 2 bắn hết: {$nums->ship2_A} phát</p>";
-    
+
 
     echo "<p>Tàu 1 chạy: {$nums->ship1_D} bước</p>";
     echo "<p>Tàu 2 chạy: {$nums->ship2_D} bước</p>";
-    
+
     echo "<pre>";
     if ($replay == FALSE) {
         echo "config1.txt\n\n";
