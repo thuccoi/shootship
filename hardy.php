@@ -1,11 +1,11 @@
 <?php
-function solveHardy($file_data = "data.txt", $player) {
+function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
     $allSteps = [];
     $board = [];    // nxn array
     
 
     $hf_vals = (object) [
-        "const_SIZE" => 10,    // should we take it as parameter?!
+        "const_SIZE" => $sizemap,    // should we take it as parameter?!
         "const_MOVEUP" => 1,
         "const_MOVEDOWN" => 2,
         "const_MOVELEFT" => 4,

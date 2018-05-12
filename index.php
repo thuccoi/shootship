@@ -6,7 +6,9 @@ if (isset($_GET['speed'])) {
     $speed = $_GET['speed'];
 }
 
-$game = new Game(3);
+$sizemap = 10;
+$file = "data.txt";
+$game = new Game(3, $sizemap);
 
 writeRandomConfig($game);
 
@@ -15,16 +17,16 @@ if (!loadConfig($game)) {
     exit;
 }
 
-war($game);
+war($game, $sizemap, $file);
 
 
-$rpgame = new Game(3);
+$rpgame = new Game(3, $sizemap);
 if (!loadConfig($rpgame)) {
     echo 'Cấu hình sai';
     exit;
 }
 
-$replay = replay($rpgame, "data.txt");
+$replay = replay($rpgame, $file);
 $maps = $replay->map;
 $ship1s = $replay->ship1;
 $ship2s = $replay->ship2;
@@ -35,7 +37,12 @@ $ship2s = $replay->ship2;
 <button id="js-replay" onclick="Play.wreplay('#js-draw');">Xem lại</button>
 <button id="js-pause" onclick="Play.pause();">Tạm dừng</button>
 <button id="js-continue" onclick="Play.continue('#js-draw');">Tiếp tục</button>
-
+<div style="float: left;">
+    <div style="background: #2196F3;width: 50px;height: 50px; "></div> Tàu 1
+</div>
+<div style="float: left;">
+    <div style="background: #4CAF50;width: 50px;height: 50px;"></div> Tàu 2
+</div>
 <script>
     var speed = <?= $speed ?>;
     var maps = <?= json_encode($maps) ?>;

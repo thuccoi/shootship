@@ -1,6 +1,6 @@
 <?php
 
-function solveKien($file = "data.txt", $player) {
+function solveKien($file = "data.txt", $player, $size_map) {
 
     $me = $player;
     $enemy = $player == 1 ? 2 : 1;
@@ -13,7 +13,7 @@ function solveKien($file = "data.txt", $player) {
     $hit_targets = [];
     $available_targets = [];
 
-    for ($i = 0; $i <= 99; $i++) {
+    for ($i = 0; $i <= ($size_map * $size_map - 1); $i++) {
         array_push($available_targets, $i);
     }
 
@@ -49,7 +49,7 @@ function solveKien($file = "data.txt", $player) {
                     } 
                 }
             }
-            $index = $v1[2] * 10 + $v1[3];
+            $index = $v1[2] * $size_map + $v1[3];
             if(in_array($index, $available_targets)){
                 unset($available_targets[$index]);
             }
@@ -77,7 +77,7 @@ function solveKien($file = "data.txt", $player) {
                         }  
                     }
                 }
-                $index = $v1[2] * 10 + $v1[3];
+                $index = $v1[2] * $size_map + $v1[3];
                 if(in_array($index, $hit_targets)){
                     unset($hit_targets[$index]);
                 }
@@ -91,8 +91,8 @@ function solveKien($file = "data.txt", $player) {
                 for ($j = -1; $j <= 1; $j++) {
                     $hit_target["x"] = $v1[2] + $i;
                     $hit_target["y"] = $v1[3] + $j;
-                    if($hit_target["x"] > -1 && $hit_target["x"] < 10 && $hit_target["y"] > -1 && $hit_target["y"] < 10){
-                        $target = $hit_target["x"] * 10 + $hit_target["y"];
+                    if($hit_target["x"] > -1 && $hit_target["x"] < $size_map && $hit_target["y"] > -1 && $hit_target["y"] < $size_map){
+                        $target = $hit_target["x"] * $size_map + $hit_target["y"];
                         array_push($hit_targets, $target);
                     }
                 }
@@ -109,8 +109,8 @@ function solveKien($file = "data.txt", $player) {
 
         if(count($available_targets) != 0){
             $random_target = array_rand($available_targets,1);
-            $x = floor($random_target / 10);
-            $y = $random_target % 10;
+            $x = floor($random_target / $size_map);
+            $y = $random_target % $size_map;
         } else {
             $random_attack_hit = array_rand($my_attack_hit,1);
             $x = $random_attack_hit["x"] + rand(-1, 1);
@@ -120,8 +120,8 @@ function solveKien($file = "data.txt", $player) {
 
     } else {
         $random_target = array_rand($available_targets,1);
-        $x = floor($random_target / 10);
-        $y = $random_target % 10;
+        $x = floor($random_target / $size_map);
+        $y = $random_target % $size_map;
         return "A {$x} {$y}";
     }
         

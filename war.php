@@ -37,7 +37,7 @@ include 'solve.php';
 
 
 function toArray($line) {
-    $line = str_replace('0', '*', $line);
+    $line = str_replace(' 0', ' *', $line);
     $data = array_map('trim', array_filter(explode(' ', $line)));
     $rs = [];
     foreach ($data as $val) {
@@ -54,7 +54,7 @@ function getData($file = "data.txt") {
     $handle = fopen($file, "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
-            $line = str_replace('0', '*', $line);
+            $line = str_replace(' 0', ' *', $line);
             $cv = array_map('trim', array_filter(explode(' ', $line)));
             $arr = [];
             foreach ($cv as $v) {
@@ -119,12 +119,12 @@ function randomPosition($game) {
     ];
 
 
-    $x = rand(0, $game->sizemap - 2);
-    $y = rand(0, $game->sizemap - 2);
+    $x = rand(0, $game->sizemap - 1);
+    $y = rand(0, $game->sizemap - 1);
 
     $ltext = '';
     $i = 0;
-    while ($i < 100) {
+    while ($i < 3000) {
         $npos = [];
         foreach ($pos as $arr) {
             $line = [];
@@ -163,25 +163,33 @@ function randomPosition($game) {
 }
 
 function writeRandomConfig($game) {
-    $line1 = randomPosition($game) . PHP_EOL;
-    $line2 = randomPosition($game) . PHP_EOL;
-    $line3 = randomPosition($game) . PHP_EOL;
-
     $handle = fopen('e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt', 'w');
-    fwrite($handle, $line1);
-    fwrite($handle, $line2);
-    fwrite($handle, $line3);
+    $k = 0;
+    for ($i = 0; $i < 1000; $i++) {
+
+        $line1 = randomPosition($game);
+        if ($line1) {
+            fwrite($handle, $line1 . PHP_EOL);
+            $k++;
+            if ($k >= 3) {
+                break;
+            }
+        }
+    }
     fclose($handle);
 
-    $line1 = randomPosition($game) . PHP_EOL;
-    $line2 = randomPosition($game) . PHP_EOL;
-    $line3 = randomPosition($game) . PHP_EOL;
-
-
     $handle = fopen('6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt', 'w');
-    fwrite($handle, $line1);
-    fwrite($handle, $line2);
-    fwrite($handle, $line3);
+    $k = 0;
+    for ($i = 0; $i < 1000; $i++) {
+        $line1 = randomPosition($game);
+        if ($line1) {
+            fwrite($handle, $line1 . PHP_EOL);
+            $k++;
+            if ($k >= 3) {
+                break;
+            }
+        }
+    }
     fclose($handle);
 }
 
@@ -279,11 +287,11 @@ function detailFile($arr) {
     }
 }
 
-function war($game) {
+function war($game, $sizemap, $file = "data.txt") {
     emptyFile($game);
 
     for ($i = 0; $i < 3000; $i++) {
-        $solve1 = toArray(solve1());
+        $solve1 = toArray(solve1($file, 1, $sizemap));
 
         if (isset($solve1[0])) {
             if ($solve1[0] == 'A') {
@@ -308,7 +316,7 @@ function war($game) {
             break;
         }
 
-        $solve2 = toArray(solve2());
+        $solve2 = toArray(solve2($file, 2, $sizemap));
 
         if (isset($solve2[0])) {
             if ($solve2[0] == 'A') {

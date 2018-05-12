@@ -1,6 +1,6 @@
 <?php
 
-function solve11($file = "data.txt", $player = 1) {
+function solveThor($file = "data.txt", $player = 1, $sizemap) {
     //sizemap data
     $sizemap = 10;
     if (!function_exists('_Thor_readData')) {
