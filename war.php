@@ -119,28 +119,47 @@ function randomPosition($game) {
     ];
 
 
-    $pp = rand(0, 213213223) % (($game->sizemap - 3) * ($game->sizemap - 3));
+    $x = rand(0, $game->sizemap - 2);
+    $y = rand(0, $game->sizemap - 2);
 
-    $x = (int) ($pp / $game->sizemap);
-    $y = $pp - $x * $game->sizemap;
+    $ltext = '';
+    $i = 0;
+    while ($i < 100) {
+        $npos = [];
+        foreach ($pos as $arr) {
+            $line = [];
+            foreach ($arr as $val) {
+                $val->x += $x;
+                $val->y += $y;
 
-    $npos = [];
-    foreach ($pos as $arr) {
-        $line = [];
-        foreach ($arr as $val) {
-            $val->x += $x;
-            $val->y += $y;
+                $line[] = $val->x;
+                $line[] = $val->y;
+            }
 
-            $line[] = $val->x;
-            $line[] = $val->y;
+            $npos[] = $line;
         }
 
-        $npos[] = $line;
+
+        $rp = rand(0, 1243434344) % count($npos);
+
+        $flat = TRUE;
+        foreach ($npos[$rp] as $a) {
+
+
+            if ($a < 0 || $a > $game->sizemap - 1) {
+                $flat = FALSE;
+                break;
+            }
+        }
+
+        if ($flat == TRUE) {
+            $ltext = implode(" ", $npos[$rp]);
+            break;
+        }
+        $i++;
     }
 
-    $rp = rand(0, 1243434344) % count($npos);
-
-    return implode(" ", $npos[$rp]).' ';
+    return $ltext;
 }
 
 function writeRandomConfig($game) {
@@ -169,6 +188,11 @@ function writeRandomConfig($game) {
 function loadConfig($game, $replayfile = FALSE) {
     if ($replayfile) {
         $cf = getConfigFile($replayfile);
+
+        if (!isset($cf[1])) {
+            return false;
+        }
+
         $cf1 = $cf[0];
         $cf2 = $cf[1];
 

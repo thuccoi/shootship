@@ -445,38 +445,38 @@ function solveThor($file = "data.txt", $player = 1) {
             $data = _Thor_readData($file);
             if (count($data) > 0) {
 
-                $broken = _Thor_isBroken($data, $player);
-
-                if ($broken != FALSE) {
-                    $dirs = ['T', 'R', 'B', 'L'];
-                    $dir = $dirs[_Thor_positionRandom(4)];
-                    switch ($dir) {
-                        case 'T':
-                            if ($broken->x == 0) {
-                                $dir = 'B';
-                            }
-                            break;
-                        case 'R':
-                            if ($broken->y == $sizemap - 1) {
-                                $dir = 'L';
-                            }
-                            break;
-                        case 'B':
-                            if ($broken->x == $sizemap - 1) {
-                                $dir = 'T';
-                            }
-                            break;
-                        case 'L':
-                            if ($broken->y == 0) {
-                                $dir = 'R';
-                            }
-                            break;
-                    }
-                    return (object) [
-                                "status" => 'D',
-                                "dir" => $dir
-                    ];
-                }
+//                $broken = _Thor_isBroken($data, $player);
+//
+//                if ($broken != FALSE) {
+//                    $dirs = ['T', 'R', 'B', 'L'];
+//                    $dir = $dirs[_Thor_positionRandom(4)];
+//                    switch ($dir) {
+//                        case 'T':
+//                            if ($broken->x == 0) {
+//                                $dir = 'B';
+//                            }
+//                            break;
+//                        case 'R':
+//                            if ($broken->y == $sizemap - 1) {
+//                                $dir = 'L';
+//                            }
+//                            break;
+//                        case 'B':
+//                            if ($broken->x == $sizemap - 1) {
+//                                $dir = 'T';
+//                            }
+//                            break;
+//                        case 'L':
+//                            if ($broken->y == 0) {
+//                                $dir = 'R';
+//                            }
+//                            break;
+//                    }
+//                    return (object) [
+//                                "status" => 'D',
+//                                "dir" => $dir
+//                    ];
+//                }
             }
 
             if (_Thor_checkHasHit($data, $player)) {

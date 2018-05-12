@@ -69,8 +69,10 @@ class Ship {
     }
 
     public function validConfig() {
+        
         for ($i = 0; $i < $this->n - 1; $i++) {
             for ($j = $i + 1; $j < $this->n; $j++) {
+                
                 if ($this->config[$i]->isEqualsPosition($this->config[$j])) {
                     return FALSE;
                 }
