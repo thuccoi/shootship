@@ -174,6 +174,10 @@ class Game {
         return TRUE;
     }
 
+    public function validXY($a) {
+        return ($a >= 0 && $a < $this->sizemap);
+    }
+
     public function getMap() {
         $map = [];
 
@@ -195,12 +199,16 @@ class Game {
                 $s2 = -2;
             }
 
-            if ($map[$this->ship1->config[$i]->x][$this->ship1->config[$i]->y] <= 0) {
-                $map[$this->ship1->config[$i]->x][$this->ship1->config[$i]->y] = $s1;
+            if ($this->validXY($this->ship1->config[$i]->x) && $this->validXY($this->ship1->config[$i]->y)) {
+                if ($map[$this->ship1->config[$i]->x][$this->ship1->config[$i]->y] <= 0) {
+                    $map[$this->ship1->config[$i]->x][$this->ship1->config[$i]->y] = $s1;
+                }
             }
 
-            if ($map[$this->ship2->config[$i]->x][$this->ship2->config[$i]->y] <= 0) {
-                $map[$this->ship2->config[$i]->x][$this->ship2->config[$i]->y] = $s2;
+            if ($this->validXY($this->ship2->config[$i]->x) && $this->validXY($this->ship2->config[$i]->y)) {
+                if ($map[$this->ship2->config[$i]->x][$this->ship2->config[$i]->y] <= 0) {
+                    $map[$this->ship2->config[$i]->x][$this->ship2->config[$i]->y] = $s2;
+                }
             }
         }
 
