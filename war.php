@@ -282,6 +282,12 @@ function startGame($game, $filedata = 'data.txt', $time) {
     if ($handle) {
         fclose($handle);
     }
+
+    $handle = fopen("history/{$time}/sizemap.txt", 'w');
+    if ($handle) {
+        fwrite($handle, $game->sizemap);
+        fclose($handle);
+    }
 }
 
 function endGame($filedata, $time) {
@@ -298,12 +304,37 @@ function detailFile($arr) {
     }
 }
 
-function war($game, $sizemap, $filedata = "data.txt", $fileconfig1 = "config1.txt", $fileconfig2 = "config2.txt") {
+function shipName($shipname) {
+    switch ($shipname) {
+        case 'thor':
+            return 'Thor';
+            break;
+        case 'hardy':
+            return 'Hardy';
+            break;
+        case 'son':
+            return 'Sơn';
+            break;
+        case 'phuong':
+            return 'Phương';
+            break;
+        case 'dat':
+            return 'Đạt';
+            break;
+        case 'kien':
+            return 'Kiên';
+            break;
+    }
+    return '';
+}
+
+function war($game, $sizemap, $filedata = "data.txt", $fileconfig1 = "config1.txt", $fileconfig2 = "config2.txt", $uplay1, $uplay2) {
     $time = time();
     startGame($game, $filedata, $time);
 
-    for ($i = 0; $i < 400; $i++) {
-        $solve1 = toArray(solve1($filedata, 1, $sizemap));
+    $ll = $sizemap * $sizemap;
+    for ($i = 0; $i < $ll; $i++) {
+        $solve1 = toArray(solve1($filedata, 1, $sizemap, $uplay1));
 
         if (isset($solve1[0])) {
             if ($solve1[0] == 'A') {
@@ -328,7 +359,7 @@ function war($game, $sizemap, $filedata = "data.txt", $fileconfig1 = "config1.tx
             break;
         }
 
-        $solve2 = toArray(solve2($filedata, 2, $sizemap));
+        $solve2 = toArray(solve2($filedata, 2, $sizemap, $uplay2));
 
         if (isset($solve2[0])) {
             if ($solve2[0] == 'A') {
@@ -402,9 +433,14 @@ function replay($game, $datafile = 'data.txt') {
     ];
 }
 
-function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fileconfig2 = 'config2.txt', $time = FALSE, $replay = FALSE) {
-
-    echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
+function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fileconfig2 = 'config2.txt', $time = FALSE, $replay = FALSE, $uplay1, $uplay2) {
+    $shipname = '';
+    if ($game->getIndexWon() == 1) {
+        $shipname = shipName($uplay1);
+    } else {
+        $shipname = shipName($uplay2);
+    }
+    echo "<b>{$shipname}</b> là tàu chiến thắng!!!";
     // echo $game->Draw();
 
     $inputdata = getData($filedata);

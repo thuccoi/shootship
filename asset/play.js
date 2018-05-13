@@ -9,6 +9,8 @@ var Play = new function __Play() {
     };
 
     this.replay = function (canvas) {
+
+
         $("#js-replay").hide();
         Play.rp = setInterval(function () {
             if (play(Play.idx, canvas) == false) {
@@ -20,12 +22,10 @@ var Play = new function __Play() {
             Play.idx++;
         }, speed);
 
+
     };
 
     this.pause = function () {
-
-        console.log(ship1s[Play.idx - 1]);
-        console.log(ship2s[Play.idx - 1]);
         clearInterval(Play.rp);
     };
 
@@ -33,11 +33,22 @@ var Play = new function __Play() {
 
         Play.replay(canvas);
     };
-    
+
     function play(i, canvas) {
         var length = maps.length;
         if (i < length) {
             $(canvas).html(maps[i]);
+            var size = 550 / sizemap;
+            $(".main .map .row .col").each(function () {
+                $(this).width(size);
+                $(this).height(size);
+            });
+
+            $(".main .map .row .fire .cell").each(function () {
+                $(this).width(size);
+                $(this).height(size);
+                $(this).css({'line-height': size + 'px'});
+            });
             return true;
         }
         return false;

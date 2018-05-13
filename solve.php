@@ -14,24 +14,65 @@ if (isset($_GET['speed'])) {
 }
 
 $sizemap = 30;
+if (isset($_GET['sizemap'])) {
+    $sizemap = $_GET['sizemap'];
+}
+
 $filedata = "data.txt";
 $fileconfig1 = "config1.txt";
 $fileconfig2 = "config2.txt";
 
-function solve1($filedata = "data.txt", $player = 1, $sizemap = 10) {
-    //   return solveThor($file, $player, $sizemap);
-    return solveKien($filedata, $player, $sizemap);
-//     return solveDat($file, $player, $sizemap);
-//     return solvePhuong($file, $player, $sizemap);
-//       return solveSon($file, $player, $sizemap);
-//    return solveHardy($file, $player, $sizemap);
+$uplay1 = 'thor';
+$uplay2 = 'thor';
+if (isset($_GET['ship1'])) {
+    $uplay1 = $_GET['ship1'];
+}
+if (isset($_GET['ship2'])) {
+    $uplay2 = $_GET['ship2'];
 }
 
-function solve2($filedata = "data.txt", $player = 2, $sizemap = 10) {
-     return solveThor($filedata, $player, $sizemap);
-//     return solveSon($file, $player, $sizemap);
-//    return solvePhuong($file, $player, $sizemap);
-//    return solveKien($file, $player, $sizemap);
-//     return solveHardy($file, $player, $sizemap);
-    //   return solveDat($file, $player, $sizemap);
+function solve1($filedata = "data.txt", $player = 1, $sizemap = 10, $uplay = 'thor') {
+    switch ($uplay) {
+        case 'thor':
+            return solveThor($filedata, $player, $sizemap);
+            break;
+        case 'hardy':
+            return solveHardy($filedata, $player, $sizemap);
+            break;
+        case 'son':
+            return solveSon($filedata, $player, $sizemap);
+            break;
+        case 'phuong':
+            return solvePhuong($filedata, $player, $sizemap);
+            break;
+        case 'dat':
+            return solveDat($filedata, $player, $sizemap);
+            break;
+        case 'kien':
+            return solveKien($filedata, $player, $sizemap);
+            break;
+    }
+}
+
+function solve2($filedata = "data.txt", $player = 2, $sizemap = 10, $uplay = 'thor') {
+    switch ($uplay) {
+        case 'thor':
+            return solveThor($filedata, $player, $sizemap);
+            break;
+        case 'hardy':
+            return solveHardy($filedata, $player, $sizemap);
+            break;
+        case 'son':
+            return solveSon($filedata, $player, $sizemap);
+            break;
+        case 'phuong':
+            return solvePhuong($filedata, $player, $sizemap);
+            break;
+        case 'dat':
+            return solveDat($filedata, $player, $sizemap);
+            break;
+        case 'kien':
+            return solveKien($filedata, $player, $sizemap);
+            break;
+    }
 }

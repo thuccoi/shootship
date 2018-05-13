@@ -27,8 +27,9 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
                     }
                     $data[] = $arr;
                 }
+                fclose($handle);
             }
-            fclose($handle);
+
             return $data;
         }
 
@@ -519,7 +520,7 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
                         $am[] = $val;
                     }
                 }
-                
+
                 $rd = _Thor_positionRandom(count($am));
                 if (isset($am[$rd]) && $am[$rd]->x >= 0 && $am[$rd]->x < $sizemap && $am[$rd]->y >= 0 && $am[$rd]->y < $sizemap) {
                     return (object) [
