@@ -9,7 +9,7 @@ if (!isset($_GET['time']) || !isset($_GET['ship1']) || !isset($_GET['ship2']) ||
 
 $time = $_GET['time'];
 if ($time > 0) {
-    $handle = fopen("history/{$time}/map.txt", "r");
+    $handle = fopen("history/{$time}/sizemap.txt", "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
             $sizemap = $line;
