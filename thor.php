@@ -37,7 +37,7 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
     if (!function_exists('_Thor_positionRandom')) {
 
         function _Thor_positionRandom($sizemap) {
-            $r = rand(0, 123454556);
+            $r = rand(0, 123456789);
             return $r % $sizemap;
         }
 
@@ -371,6 +371,8 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
         function _Thor_rangeShoot($data, $player, $sizemap) {
             $hits = _Thor_getHasHit($data, $player);
 
+            $hashit = _Thor_getDataBeforDirect($data, $player, $sizemap);
+
             $rss = [];
             foreach ($hits as $hit) {
                 $rs = _Thor_range($hit, $data, $sizemap, $player);
@@ -378,8 +380,6 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
                     $rss[] = $r;
                 }
             }
-
-            $hashit = _Thor_getDataBeforDirect($data, $player, $sizemap);
 
             $rs = [];
             foreach ($rss as $val) {
@@ -445,44 +445,44 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
 
         function _Thor_shoot($file, $player, $sizemap) {
             $data = _Thor_readData($file);
-//            if (count($data) > 0) {
-//
-//                $broken = _Thor_isBroken($data, $player);
-//
-//                if ($broken != FALSE) {
-//                    $dirs = ['T', 'R', 'B', 'L'];
-//                    $dir = $dirs[_Thor_positionRandom(4)];
-//                    switch ($dir) {
-//                        case 'T':
-//                            if ($broken->x == 0) {
-//                                $dir = 'B';
-//                            }
-//                            break;
-//                        case 'R':
-//                            if ($broken->y == $sizemap - 1) {
-//                                $dir = 'L';
-//                            }
-//                            break;
-//                        case 'B':
-//                            if ($broken->x == $sizemap - 1) {
-//                                $dir = 'T';
-//                            }
-//                            break;
-//                        case 'L':
-//                            if ($broken->y == 0) {
-//                                $dir = 'R';
-//                            }
-//                            break;
-//                    }
-//                    return (object) [
-//                                "status" => 'D',
-//                                "dir" => $dir
-//                    ];
-//                }
-//            }
+            if (count($data) > 0) {
+
+                $broken = _Thor_isBroken($data, $player);
+
+                if ($broken != FALSE) {
+                    $dirs = ['T', 'R', 'B', 'L'];
+                    $dir = $dirs[_Thor_positionRandom(4)];
+                    switch ($dir) {
+                        case 'T':
+                            if ($broken->x == 0) {
+                                $dir = 'B';
+                            }
+                            break;
+                        case 'R':
+                            if ($broken->y == $sizemap - 1) {
+                                $dir = 'L';
+                            }
+                            break;
+                        case 'B':
+                            if ($broken->x == $sizemap - 1) {
+                                $dir = 'T';
+                            }
+                            break;
+                        case 'L':
+                            if ($broken->y == 0) {
+                                $dir = 'R';
+                            }
+                            break;
+                    }
+                    return (object) [
+                                "status" => 'D',
+                                "dir" => $dir
+                    ];
+                }
+            }
 
             if (_Thor_checkHasHit($data, $player)) {
-               
+
                 $rs = _Thor_rangeShoot($data, $player, $sizemap);
 
                 if ($rs) {
@@ -508,20 +508,33 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
 
                 $map = _Thor_getMapEmpty($sizemap);
                 $nmap = _Thor_setShooted($data, $player, $map, $sizemap);
-                
+
                 foreach ($nmap as $val) {
+                    if ($val->x % 2 == 1 || $val->y % 3 == 2) {
+                        $val->status = 1;
+                    }
                     if ($val->status != 1) {
                         $am[] = $val;
                     }
                 }
-                
-                $rd = _Thor_positionRandom(count($am));
 
-                return (object) [
-                            "status" => "A",
-                            'x' => $am[$rd]->x,
-                            'y' => $am[$rd]->y
-                ];
+                $rd = _Thor_positionRandom(count($am));
+                if (isset($am[$rd]) && $am[$rd]->x >= 0 && $am[$rd]->x < $sizemap && $am[$rd]->y >= 0 && $am[$rd]->y < $sizemap) {
+                    return (object) [
+                                "status" => "A",
+                                'x' => $am[$rd]->x,
+                                'y' => $am[$rd]->y
+                    ];
+                } else {
+                    $x = _Thor_positionRandom($sizemap);
+                    $y = _Thor_positionRandom($sizemap);
+
+                    return (object) [
+                                "status" => "A",
+                                "x" => $x,
+                                "y" => $y
+                    ];
+                }
             }
         }
 
