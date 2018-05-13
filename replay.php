@@ -9,29 +9,12 @@ if (!isset($_GET['time']) || !isset($_GET['sizemap']) || !isset($_GET['speed']))
 
 $time = $_GET['time'];
 if ($time > 0) {
-    $handle = fopen("history/{$time}/sizemap.txt", "r");
-    if ($handle) {
-        while (($line = fgets($handle)) !== false) {
-            $sizemap = (int) $line;
-        }
-        fclose($handle);
-    }
 
-    $handle = fopen("history/{$time}/nameship1.txt", "r");
-    if ($handle) {
-        while (($line = fgets($handle)) !== false) {
-            $uplay1 = trim($line);
-        }
-        fclose($handle);
-    }
+    $gtcf = getTimeConfig($time);
 
-    $handle = fopen("history/{$time}/nameship2.txt", "r");
-    if ($handle) {
-        while (($line = fgets($handle)) !== false) {
-            $uplay2 = trim($line);
-        }
-        fclose($handle);
-    }
+    $sizemap = $gtcf->sizemap;
+    $uplay1 = $gtcf->uplay1;
+    $uplay2 = $gtcf->uplay2;
 
     $game = new Game(3, $sizemap);
 
@@ -78,18 +61,6 @@ if ($time > 0) {
 <div style="clear: both"></div>
 <div class="dirs" style="float: left; width: 500px;">
     <?php
-    $dirs = array_filter(glob('history/*'), 'is_dir');
-    $times = [];
-    foreach ($dirs as $val) {
-        $time = str_replace('history/', '', $val);
-        $times[] = $time;
-    }
-    $times = array_reverse($times);
-
-    foreach ($times as $time) {
-        ?>
-        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>"><?= $time ?></a>
-        <?php
-    }
+    history($speed);
     ?>
 </div>

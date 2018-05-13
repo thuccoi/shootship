@@ -452,7 +452,7 @@ function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fil
     } else {
         $shipname = shipName($uplay2);
     }
-   
+
     echo "<b>{$shipname}</b> là tàu chiến thắng!!!";
     // echo $game->Draw();
 
@@ -501,6 +501,66 @@ function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fil
         detailFile(getData("history/{$time}/data.txt"));
     }
     echo "</pre>";
+}
+
+function getTimeConfig($time) {
+    $sizemap = 10;
+    $handle = fopen("history/{$time}/sizemap.txt", "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $sizemap = (int) $line;
+        }
+        fclose($handle);
+    }
+    $uplay1 = 'thor';
+    $handle = fopen("history/{$time}/nameship1.txt", "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $uplay1 = trim($line);
+        }
+        fclose($handle);
+    }
+    $uplay2 = 'thor';
+    $handle = fopen("history/{$time}/nameship2.txt", "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $uplay2 = trim($line);
+        }
+        fclose($handle);
+    }
+
+    return (object) [
+                'sizemap' => $sizemap,
+                'uplay1' => $uplay1,
+                'uplay2' => $uplay2
+    ];
+}
+
+function history($speed) {
+    $dirs = array_filter(glob('history/*'), 'is_dir');
+    $times = [];
+    foreach ($dirs as $val) {
+        $time = str_replace('history/', '', $val);
+        $times[] = $time;
+    }
+    $times = array_reverse($times);
+
+    $ll = count($times);
+    foreach ($times as $idx => $time) {
+        $gtcf = getTimeConfig($time);
+        $sizemap = $gtcf->sizemap;
+        $uplay1 = $gtcf->uplay1;
+        $uplay2 = $gtcf->uplay2;
+        ?>
+        <a style="padding: 10px; border: 1px solid #ccc; display: block;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>">
+            Trận <?= $ll - $idx ?>:
+            <?= shipName($uplay1) . " & " . shipName($uplay2) ?>
+        </a>
+        <?php
+    }
+    ?>
+    <div style="margin-bottom: 200px;"></div>
+    <?php
 }
 ?>
 
