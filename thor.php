@@ -445,41 +445,41 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
 
         function _Thor_shoot($file, $player, $sizemap) {
             $data = _Thor_readData($file);
-            if (count($data) > 0) {
-
-                $broken = _Thor_isBroken($data, $player);
-
-                if ($broken != FALSE) {
-                    $dirs = ['T', 'R', 'B', 'L'];
-                    $dir = $dirs[_Thor_positionRandom(4)];
-                    switch ($dir) {
-                        case 'T':
-                            if ($broken->x == 0) {
-                                $dir = 'B';
-                            }
-                            break;
-                        case 'R':
-                            if ($broken->y == $sizemap - 1) {
-                                $dir = 'L';
-                            }
-                            break;
-                        case 'B':
-                            if ($broken->x == $sizemap - 1) {
-                                $dir = 'T';
-                            }
-                            break;
-                        case 'L':
-                            if ($broken->y == 0) {
-                                $dir = 'R';
-                            }
-                            break;
-                    }
-                    return (object) [
-                                "status" => 'D',
-                                "dir" => $dir
-                    ];
-                }
-            }
+//            if (count($data) > 0) {
+//
+//                $broken = _Thor_isBroken($data, $player);
+//
+//                if ($broken != FALSE) {
+//                    $dirs = ['T', 'R', 'B', 'L'];
+//                    $dir = $dirs[_Thor_positionRandom(4)];
+//                    switch ($dir) {
+//                        case 'T':
+//                            if ($broken->x == 0) {
+//                                $dir = 'B';
+//                            }
+//                            break;
+//                        case 'R':
+//                            if ($broken->y == $sizemap - 1) {
+//                                $dir = 'L';
+//                            }
+//                            break;
+//                        case 'B':
+//                            if ($broken->x == $sizemap - 1) {
+//                                $dir = 'T';
+//                            }
+//                            break;
+//                        case 'L':
+//                            if ($broken->y == 0) {
+//                                $dir = 'R';
+//                            }
+//                            break;
+//                    }
+//                    return (object) [
+//                                "status" => 'D',
+//                                "dir" => $dir
+//                    ];
+//                }
+//            }
 
             if (_Thor_checkHasHit($data, $player)) {
 
@@ -510,14 +510,16 @@ function solveThor($file = "data.txt", $player = 1, $sizemap) {
                 $nmap = _Thor_setShooted($data, $player, $map, $sizemap);
 
                 foreach ($nmap as $val) {
-                    if ($val->x % 2 == 1 || $val->y % 3 == 2) {
+
+                    if ($val->x % 2 == 0 && $val->y % 3 < 2) {
                         $val->status = 1;
                     }
+
                     if ($val->status != 1) {
                         $am[] = $val;
                     }
                 }
-
+                
                 $rd = _Thor_positionRandom(count($am));
                 if (isset($am[$rd]) && $am[$rd]->x >= 0 && $am[$rd]->x < $sizemap && $am[$rd]->y >= 0 && $am[$rd]->y < $sizemap) {
                     return (object) [
