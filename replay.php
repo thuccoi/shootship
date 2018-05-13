@@ -1,14 +1,9 @@
 <?php
 include 'war.php';
 
-$speed = 100;
-if (isset($_GET['speed'])) {
-    $speed = $_GET['speed'];
-}
-
 $time = $_GET['time'];
 if ($time > 0) {
-    $game = new Game(3);
+    $game = new Game(3, $sizemap);
 
     if (!loadConfig($game, "history/config_{$time}.txt")) {
         echo 'Cấu hình sai';

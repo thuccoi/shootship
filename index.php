@@ -1,14 +1,6 @@
 <?php
 include 'war.php';
 
-$speed = 20;
-if (isset($_GET['speed'])) {
-    $speed = $_GET['speed'];
-}
-
-$sizemap = 20;
-$file = "data.txt";
-
 
 $game = new Game(3, $sizemap);
 writeRandomConfig($game);

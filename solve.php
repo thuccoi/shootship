@@ -7,6 +7,16 @@ include_once 'phuong.php';
 include_once 'son.php';
 include_once 'dat.php';
 
+
+$speed = 20;
+if (isset($_GET['speed'])) {
+    $speed = $_GET['speed'];
+}
+
+$sizemap = 20;
+$file = "data.txt";
+
+
 function solve1($file = "data.txt", $player = 1, $sizemap = 10) {
     //   return solveThor($file, $player, $sizemap);
     return solveKien($file, $player, $sizemap);

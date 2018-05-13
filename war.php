@@ -64,7 +64,7 @@ function getData($file = "data.txt") {
         }
         fclose($handle);
     }
-    
+
     return $inputfile;
 }
 
@@ -261,14 +261,16 @@ function emptyFile($game) {
     $config2 = $game->ship2->getTextConfig() . PHP_EOL;
 
     $hd = fopen('history/config_' . $time . '.txt', 'w');
-    fwrite($hd, $config1);
-    fwrite($hd, $config2);
+    if ($hd) {
+        fwrite($hd, $config1);
+        fwrite($hd, $config2);
 
-    fclose($hd);
-
+        fclose($hd);
+    }
     $handle = fopen('data.txt', 'w');
-
-    fclose($handle);
+    if ($handle) {
+        fclose($handle);
+    }
 }
 
 function detailFile($arr) {
