@@ -14,20 +14,21 @@ if (isset($_GET['speed'])) {
 }
 
 $sizemap = 20;
-$file = "data.txt";
+$filedata = "data.txt";
+$fileconfig1 = "e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt";
+$fileconfig2 = "6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt";
 
-
-function solve1($file = "data.txt", $player = 1, $sizemap = 10) {
+function solve1($filedata = "data.txt", $player = 1, $sizemap = 10) {
     //   return solveThor($file, $player, $sizemap);
-    return solveKien($file, $player, $sizemap);
+    return solveKien($filedata, $player, $sizemap);
 //     return solveDat($file, $player, $sizemap);
 //     return solvePhuong($file, $player, $sizemap);
 //       return solveSon($file, $player, $sizemap);
 //    return solveHardy($file, $player, $sizemap);
 }
 
-function solve2($file = "data.txt", $player = 2, $sizemap = 10) {
-     return solveThor($file, $player, $sizemap);
+function solve2($filedata = "data.txt", $player = 2, $sizemap = 10) {
+     return solveThor($filedata, $player, $sizemap);
 //     return solveSon($file, $player, $sizemap);
 //    return solvePhuong($file, $player, $sizemap);
 //    return solveKien($file, $player, $sizemap);

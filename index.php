@@ -3,23 +3,23 @@ include 'war.php';
 
 
 $game = new Game(3, $sizemap);
-writeRandomConfig($game);
+writeRandomConfig($game, $fileconfig1, $fileconfig2);
 
-if (!loadConfig($game)) {
+if (!loadConfig($game, $fileconfig1, $fileconfig2)) {
     echo 'Cấu hình sai';
     exit;
 }
 
-war($game, $sizemap, $file);
+war($game, $sizemap, $filedata, $fileconfig1, $fileconfig2);
 
 
 $rpgame = new Game(3, $sizemap);
-if (!loadConfig($rpgame)) {
+if (!loadConfig($rpgame, $fileconfig1, $fileconfig2)) {
     echo 'Cấu hình sai';
     exit;
 }
 
-$replay = replay($rpgame, $file);
+$replay = replay($rpgame, $filedata);
 $maps = $replay->map;
 $ship1s = $replay->ship1;
 $ship2s = $replay->ship2;
@@ -47,6 +47,6 @@ $ship2s = $replay->ship2;
 
 <div id="js-stats" class="stats" style="display: none;">
     <?php
-    stats($game);
+    stats($game, $filedata, $fileconfig1, $fileconfig2);
     ?>
 </div>

@@ -54,9 +54,9 @@ function toArray($line) {
     return $rs;
 }
 
-function getData($file = "data.txt") {
+function getData($filedata = "data.txt") {
     $inputfile = [];
-    $handle = fopen($file, "r");
+    $handle = fopen($filedata, "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
             $cv = toArray($line);
@@ -68,8 +68,8 @@ function getData($file = "data.txt") {
     return $inputfile;
 }
 
-function getConfigFile($file = "config1.txt") {
-    $handle = fopen($file, "r");
+function getConfigFile($fileconfig = "config.txt") {
+    $handle = fopen($fileconfig, "r");
     $listconfig = [];
     if ($handle) {
         $i = 0;
@@ -86,9 +86,10 @@ function getConfigFile($file = "config1.txt") {
             $listconfig[] = $cv;
             $i++;
         }
+        fclose($handle);
     }
 
-    fclose($handle);
+
 
     return $listconfig;
 }
@@ -155,38 +156,42 @@ function randomPosition($game) {
     return $ltext;
 }
 
-function writeRandomConfig($game) {
-    $handle = fopen('e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt', 'w');
-    $k = 0;
-    for ($i = 0; $i < 1000; $i++) {
+function writeRandomConfig($game, $fileconfig1 = 'config1.txt', $fileconfig2 = 'config2.txt') {
+    $handle = fopen($fileconfig1, 'w');
+    if ($handle) {
+        $k = 0;
+        for ($i = 0; $i < 1000; $i++) {
 
-        $line1 = randomPosition($game);
-        if ($line1) {
-            fwrite($handle, $line1 . PHP_EOL);
-            $k++;
-            if ($k >= 3) {
-                break;
+            $line1 = randomPosition($game);
+            if ($line1) {
+                fwrite($handle, $line1 . PHP_EOL);
+                $k++;
+                if ($k >= 3) {
+                    break;
+                }
             }
         }
+        fclose($handle);
     }
-    fclose($handle);
 
-    $handle = fopen('6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt', 'w');
-    $k = 0;
-    for ($i = 0; $i < 1000; $i++) {
-        $line1 = randomPosition($game);
-        if ($line1) {
-            fwrite($handle, $line1 . PHP_EOL);
-            $k++;
-            if ($k >= 3) {
-                break;
+    $handle = fopen($fileconfig2, 'w');
+    if ($handle) {
+        $k = 0;
+        for ($i = 0; $i < 1000; $i++) {
+            $line1 = randomPosition($game);
+            if ($line1) {
+                fwrite($handle, $line1 . PHP_EOL);
+                $k++;
+                if ($k >= 3) {
+                    break;
+                }
             }
         }
+        fclose($handle);
     }
-    fclose($handle);
 }
 
-function loadConfig($game, $replayfile = FALSE) {
+function loadConfig($game, $fileconfig1 = 'config1.txt', $fileconfig2 = 'config2.txt', $replayfile = FALSE) {
     if ($replayfile) {
         $cf = getConfigFile($replayfile);
 
@@ -213,8 +218,8 @@ function loadConfig($game, $replayfile = FALSE) {
 
         return FALSE;
     } else {
-        $cf1s = getConfigFile("e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt");
-        $cf2s = getConfigFile("6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt");
+        $cf1s = getConfigFile($fileconfig1);
+        $cf2s = getConfigFile($fileconfig2);
 
         foreach ($cf1s as $cf1) {
 
@@ -237,40 +242,41 @@ function loadConfig($game, $replayfile = FALSE) {
     return FALSE;
 }
 
-function writeAttack($obj, $x, $y, $status = 'F') {
+function writeAttack($obj, $x, $y, $status = 'F', $filedata = 'data.txt') {
     $data = "{$obj} A {$x} {$y} {$status}" . PHP_EOL;
     $data = str_replace('*', '', $data);
-    $handle = fopen('data.txt', 'a');
+    $handle = fopen($filedata, 'a');
     fwrite($handle, $data);
     fclose($handle);
 }
 
-function writeDefense($obj, $dir) {
+function writeDefense($obj, $dir, $filedata = 'data.txt') {
     $data = "{$obj} D {$dir}" . PHP_EOL;
     $data = str_replace('*', '', $data);
-    $handle = fopen('data.txt', 'a');
+    $handle = fopen($filedata, 'a');
     fwrite($handle, $data);
     fclose($handle);
 }
 
-function emptyFile($game) {
-    $time = time();
-    copy('data.txt', 'history/data_' . $time . '.txt');
+function startGame($game, $filedata = 'data.txt', $time) {
 
     $config1 = $game->ship1->getTextConfig() . PHP_EOL;
     $config2 = $game->ship2->getTextConfig() . PHP_EOL;
-
     $hd = fopen('history/config_' . $time . '.txt', 'w');
     if ($hd) {
         fwrite($hd, $config1);
         fwrite($hd, $config2);
-
         fclose($hd);
     }
-    $handle = fopen('data.txt', 'w');
+
+    $handle = fopen($filedata, 'w');
     if ($handle) {
         fclose($handle);
     }
+}
+
+function endGame($filedata, $time) {
+    copy($filedata, 'history/data_' . $time . '.txt');
 }
 
 function detailFile($arr) {
@@ -282,11 +288,12 @@ function detailFile($arr) {
     }
 }
 
-function war($game, $sizemap, $file = "data.txt") {
-    emptyFile($game);
+function war($game, $sizemap, $filedata = "data.txt", $fileconfig1 = "config1.txt", $fileconfig2 = "config2.txt") {
+    $time = time();
+    startGame($game, $filedata, $time);
 
     for ($i = 0; $i < 400; $i++) {
-        $solve1 = toArray(solve1($file, 1, $sizemap));
+        $solve1 = toArray(solve1($filedata, 1, $sizemap));
 
         if (isset($solve1[0])) {
             if ($solve1[0] == 'A') {
@@ -296,12 +303,12 @@ function war($game, $sizemap, $file = "data.txt") {
                     if ($game->shipShoot1($solve1[1], $solve1[2]) == TRUE) {
                         $status = 'T';
                     }
-                    writeAttack(1, $solve1[1], $solve1[2], $status);
+                    writeAttack(1, $solve1[1], $solve1[2], $status, $filedata);
                 }
             } elseif ($solve1[0] == 'D') {
                 if (isset($solve1[1])) {
                     if ($game->moveShip1($solve1[1])) {
-                        writeDefense(1, $solve1[1]);
+                        writeDefense(1, $solve1[1], $filedata);
                     }
                 }
             }
@@ -311,7 +318,7 @@ function war($game, $sizemap, $file = "data.txt") {
             break;
         }
 
-        $solve2 = toArray(solve2($file, 2, $sizemap));
+        $solve2 = toArray(solve2($filedata, 2, $sizemap));
 
         if (isset($solve2[0])) {
             if ($solve2[0] == 'A') {
@@ -321,12 +328,12 @@ function war($game, $sizemap, $file = "data.txt") {
                     if ($game->shipShoot2($solve2[1], $solve2[2]) == TRUE) {
                         $status = 'T';
                     }
-                    writeAttack(2, $solve2[1], $solve2[2], $status);
+                    writeAttack(2, $solve2[1], $solve2[2], $status, $filedata);
                 }
             } elseif ($solve2[0] == 'D') {
                 if (isset($solve2[1])) {
                     if ($game->moveShip2($solve2[1])) {
-                        writeDefense(2, $solve2[1]);
+                        writeDefense(2, $solve2[1], $filedata);
                     }
                 }
             }
@@ -337,6 +344,8 @@ function war($game, $sizemap, $file = "data.txt") {
             break;
         }
     }
+
+    endGame($filedata, $time);
 }
 
 function replay($game, $datafile = 'data.txt') {
@@ -356,9 +365,6 @@ function replay($game, $datafile = 'data.txt') {
                     } elseif ($line[0] == 2) {
                         $game->shipShoot2($line[2], $line[3]);
                     }
-                } else {
-                    print_r($line);
-                    exit;
                 }
 
                 $maps[] = $game->Draw($line[2], $line[3], $line[0]);
@@ -386,12 +392,12 @@ function replay($game, $datafile = 'data.txt') {
     ];
 }
 
-function stats($game, $time = FALSE, $replay = FALSE) {
+function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fileconfig2 = 'config2.txt', $time = FALSE, $replay = FALSE) {
 
     echo "Tàu chiến thắng là tàu: " . $game->getIndexWon();
     // echo $game->Draw();
 
-    $inputdata = getData();
+    $inputdata = getData($filedata);
     echo "<p>Tổng số bước là: " . count($inputdata) . " </p>";
     $nums = array_reduce($inputdata, function($sum, $e) {
         if ($e[0] == 1 && $e[1] == 'A') {
@@ -420,14 +426,14 @@ function stats($game, $time = FALSE, $replay = FALSE) {
     echo "<pre>";
     if ($replay == FALSE) {
         echo "config1.txt\n\n";
-        detailFile(getData("6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt"));
+        detailFile(getData($fileconfig1));
         echo "\n\n\n";
         echo "config2.txt\n\n";
-        detailFile(getData("e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt"));
+        detailFile(getData($fileconfig2));
 
         echo "\n\n\n";
         echo "data.txt\n\n";
-        detailFile(getData());
+        detailFile(getData($filedata));
     } else {
         echo "config.txt\n\n";
         detailFile(getData("history/config_{$time}.txt"));

@@ -5,7 +5,7 @@ $time = $_GET['time'];
 if ($time > 0) {
     $game = new Game(3, $sizemap);
 
-    if (!loadConfig($game, "history/config_{$time}.txt")) {
+    if (!loadConfig($game, $fileconfig1, $fileconfig2, "history/config_{$time}.txt")) {
         echo 'Cấu hình sai';
         exit;
     }
@@ -35,6 +35,6 @@ if ($time > 0) {
 
 <div id="js-stats" class="stats" >
     <?php
-    stats($game, $time, TRUE);
+    stats($game, $filedata, $fileconfig1, $fileconfig2, $time, TRUE);
     ?>
 </div>
