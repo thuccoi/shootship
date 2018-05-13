@@ -262,7 +262,16 @@ function startGame($game, $filedata = 'data.txt', $time) {
 
     $config1 = $game->ship1->getTextConfig() . PHP_EOL;
     $config2 = $game->ship2->getTextConfig() . PHP_EOL;
-    $hd = fopen('history/config_' . $time . '.txt', 'w');
+
+    $filename = "history/{$time}/config.txt";
+    if (!file_exists($filename)) {
+        if (!mkdir("history/{$time}", 0777, true)) {
+            die('không tạo được thư mục cấu hình...');
+        }
+    }
+
+    $hd = fopen($filename, 'w');
+
     if ($hd) {
         fwrite($hd, $config1);
         fwrite($hd, $config2);
@@ -276,7 +285,8 @@ function startGame($game, $filedata = 'data.txt', $time) {
 }
 
 function endGame($filedata, $time) {
-    copy($filedata, 'history/data_' . $time . '.txt');
+    $filename = "history/{$time}/data.txt";
+    copy($filedata, $filename);
 }
 
 function detailFile($arr) {
@@ -436,10 +446,10 @@ function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fil
         detailFile(getData($filedata));
     } else {
         echo "config.txt\n\n";
-        detailFile(getData("history/config_{$time}.txt"));
+        detailFile(getData("history/{$time}/config.txt"));
         echo "\n\n\n";
         echo "data.txt\n\n";
-        detailFile(getData("history/data_{$time}.txt"));
+        detailFile(getData("history/{$time}/data.txt"));
     }
     echo "</pre>";
 }

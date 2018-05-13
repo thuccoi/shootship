@@ -15,8 +15,8 @@ if (isset($_GET['speed'])) {
 
 $sizemap = 20;
 $filedata = "data.txt";
-$fileconfig1 = "e3822af53cf86a768888349b90cf480c_864299_CHG5J82EZUSQ4.txt";
-$fileconfig2 = "6dbc1e2066279f11fdbe3184b6145678_352551_UTDUFPTWN3FPZ.txt";
+$fileconfig1 = "config1.txt";
+$fileconfig2 = "config2.txt";
 
 function solve1($filedata = "data.txt", $player = 1, $sizemap = 10) {
     //   return solveThor($file, $player, $sizemap);

@@ -5,13 +5,13 @@ $time = $_GET['time'];
 if ($time > 0) {
     $game = new Game(3, $sizemap);
 
-    if (!loadConfig($game, $fileconfig1, $fileconfig2, "history/config_{$time}.txt")) {
+    if (!loadConfig($game, $fileconfig1, $fileconfig2, "history/{$time}/config.txt")) {
         echo 'Cấu hình sai';
         exit;
     }
 
 
-    $replay = replay($game, "history/data_{$time}.txt");
+    $replay = replay($game, "history/{$time}/data.txt");
     $maps = $replay->map;
     $ship1s = $replay->ship1;
     $ship2s = $replay->ship2;
