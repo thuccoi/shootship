@@ -38,3 +38,21 @@ if ($time > 0) {
     stats($game, $filedata, $fileconfig1, $fileconfig2, $time, TRUE);
     ?>
 </div>
+<div style="clear: both"></div>
+<div class="dirs" style="float: left; width: 500px;">
+    <?php
+    $dirs = array_filter(glob('history/*'), 'is_dir');
+    $times = [];
+    foreach ($dirs as $val) {
+        $time = str_replace('history/', '', $val);
+        $times[] = $time;
+    }
+    $times = array_reverse($times);
+
+    foreach ($times as $time) {
+        ?>
+        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&speed=10" ><?= $time ?></a>
+        <?php
+    }
+    ?>
+</div>

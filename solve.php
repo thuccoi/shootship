@@ -13,7 +13,7 @@ if (isset($_GET['speed'])) {
     $speed = $_GET['speed'];
 }
 
-$sizemap = 20;
+$sizemap = 30;
 $filedata = "data.txt";
 $fileconfig1 = "config1.txt";
 $fileconfig2 = "config2.txt";

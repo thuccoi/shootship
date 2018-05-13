@@ -50,7 +50,7 @@ $ship2s = $replay->ship2;
     stats($game, $filedata, $fileconfig1, $fileconfig2);
     ?>
 </div>
-
+<div style="clear: both"></div>
 <div class="dirs" style="float: left; width: 500px;">
     <?php
     $dirs = array_filter(glob('history/*'), 'is_dir');
