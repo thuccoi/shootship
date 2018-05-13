@@ -38,6 +38,11 @@ include 'solve.php';
 
 function toArray($line) {
     $line = str_replace(' 0', ' *', $line);
+
+    if ($line[0] == '0') {
+        $line[0] = '*';
+    }
+
     $data = array_map('trim', array_filter(explode(' ', $line)));
     $rs = [];
     foreach ($data as $val) {
@@ -54,23 +59,12 @@ function getData($file = "data.txt") {
     $handle = fopen($file, "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
-            $line = str_replace(' 0', ' *', $line);
-            $cv = array_map('trim', array_filter(explode(' ', $line)));
-            $arr = [];
-            foreach ($cv as $v) {
-                if ($v) {
-                    if ($v == '*') {
-                        $v = 0;
-                    }
-                    $arr[] = $v;
-                }
-            }
-            $inputfile[] = $arr;
+            $cv = toArray($line);
+            $inputfile[] = $cv;
         }
         fclose($handle);
     }
-
-
+    
     return $inputfile;
 }
 
@@ -83,7 +77,6 @@ function getConfigFile($file = "config1.txt") {
             if ($i == 3) {
                 break;
             }
-
             $cv = toArray($line);
             if (count($cv) < 6) {
                 echo "Sai file cấu hình";
@@ -290,7 +283,7 @@ function detailFile($arr) {
 function war($game, $sizemap, $file = "data.txt") {
     emptyFile($game);
 
-    for ($i = 0; $i < 3000; $i++) {
+    for ($i = 0; $i < 400; $i++) {
         $solve1 = toArray(solve1($file, 1, $sizemap));
 
         if (isset($solve1[0])) {
@@ -355,11 +348,15 @@ function replay($game, $datafile = 'data.txt') {
             if ($line[1] == 'A') {
 
                 if (isset($line[2]) && isset($line[3])) {
+
                     if ($line[0] == 1) {
                         $game->shipShoot1($line[2], $line[3]);
                     } elseif ($line[0] == 2) {
                         $game->shipShoot2($line[2], $line[3]);
                     }
+                } else {
+                    print_r($line);
+                    exit;
                 }
 
                 $maps[] = $game->Draw($line[2], $line[3], $line[0]);

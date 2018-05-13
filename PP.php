@@ -18,19 +18,19 @@
             return array_unique( array_diff_assoc( $array, array_unique( $array ) ) );
         }
 
-        public static function fireRandom() {
-            $x = rand(0, 10);
-            $y = rand(0, 10);
+        public static function fireRandom($sizemap) {
+            $x = rand(0, $sizemap);
+            $y = rand(0, $sizemap);
             return "A {$x} {$y}";
         }
 
-        public static function fireRandomWithException($exceptions) {
-            $x = rand(0, 10);
-            $y = rand(0, 10);
+        public static function fireRandomWithException($exceptions, $sizemap) {
+            $x = rand(0, $sizemap);
+            $y = rand(0, $sizemap);
 
             for ($ie = 0; $ie < count($exceptions); $ie++) {
                 if ($x == $exceptions[$ie]->x && $y == $exceptions[$ie]->y) {
-                    self::fireRandomWithException($exceptions);
+                    self::fireRandomWithException($exceptions, $sizemap);
                 } else {
                     return "A {$x} {$y}";
                 }

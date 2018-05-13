@@ -60,6 +60,6 @@ function solvePhuong($file = "data.txt", $player = 1, $sizemap = 10) {
             }
         }
     }
-    $move = $pp->fireRandom();
+    $move = $pp->fireRandom($sizemap);
     return $move;
 }
