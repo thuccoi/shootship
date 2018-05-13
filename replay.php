@@ -2,7 +2,7 @@
 include 'war.php';
 
 
-if (!isset($_GET['time']) || !isset($_GET['ship1']) || !isset($_GET['ship2']) || !isset($_GET['sizemap']) || !isset($_GET['speed'])) {
+if (!isset($_GET['time']) || !isset($_GET['sizemap']) || !isset($_GET['speed'])) {
     echo '<a href="/ship">Hãy chọn cấu hình trước </a>';
     exit;
 }
@@ -12,11 +12,26 @@ if ($time > 0) {
     $handle = fopen("history/{$time}/sizemap.txt", "r");
     if ($handle) {
         while (($line = fgets($handle)) !== false) {
-            $sizemap = $line;
+            $sizemap = (int) $line;
         }
         fclose($handle);
     }
 
+    $handle = fopen("history/{$time}/nameship1.txt", "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $uplay1 = trim($line);
+        }
+        fclose($handle);
+    }
+
+    $handle = fopen("history/{$time}/nameship2.txt", "r");
+    if ($handle) {
+        while (($line = fgets($handle)) !== false) {
+            $uplay2 = trim($line);
+        }
+        fclose($handle);
+    }
 
     $game = new Game(3, $sizemap);
 
@@ -40,6 +55,12 @@ if ($time > 0) {
 <button id="js-replay" onclick="Play.wreplay('#js-draw');">Xem lại</button>
 <button id="js-pause" onclick="Play.pause();">Tạm dừng</button>
 <button id="js-continue" onclick="Play.continue('#js-draw');">Tiếp tục</button>
+<div style="float: left; padding-right: 10px;">
+    <div style="background: #2196F3;width: 50px;height: 50px; "></div> <?= shipName($uplay1) ?>
+</div>
+<div style="float: left; padding-right: 10px;">
+    <div style="background: #4CAF50;width: 50px;height: 50px;"></div> <?= shipName($uplay2) ?>
+</div>
 
 <script>
     var speed = <?= $speed ?>;
@@ -67,7 +88,7 @@ if ($time > 0) {
 
     foreach ($times as $time) {
         ?>
-        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&speed=10" ><?= $time ?></a>
+        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>"><?= $time ?></a>
         <?php
     }
     ?>

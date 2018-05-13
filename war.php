@@ -258,7 +258,7 @@ function writeDefense($obj, $dir, $filedata = 'data.txt') {
     fclose($handle);
 }
 
-function startGame($game, $filedata = 'data.txt', $time) {
+function startGame($game, $filedata = 'data.txt', $time, $uplay1, $uplay2) {
 
     $config1 = $game->ship1->getTextConfig() . PHP_EOL;
     $config2 = $game->ship2->getTextConfig() . PHP_EOL;
@@ -285,7 +285,19 @@ function startGame($game, $filedata = 'data.txt', $time) {
 
     $handle = fopen("history/{$time}/sizemap.txt", 'w');
     if ($handle) {
-        fwrite($handle, $game->sizemap);
+        fwrite($handle, $game->sizemap . PHP_EOL);
+        fclose($handle);
+    }
+
+    $handle = fopen("history/{$time}/nameship1.txt", 'w');
+    if ($handle) {
+        fwrite($handle, $uplay1 . PHP_EOL);
+        fclose($handle);
+    }
+
+    $handle = fopen("history/{$time}/nameship2.txt", 'w');
+    if ($handle) {
+        fwrite($handle, $uplay2 . PHP_EOL);
         fclose($handle);
     }
 }
@@ -330,7 +342,7 @@ function shipName($shipname) {
 
 function war($game, $sizemap, $filedata = "data.txt", $fileconfig1 = "config1.txt", $fileconfig2 = "config2.txt", $uplay1, $uplay2) {
     $time = time();
-    startGame($game, $filedata, $time);
+    startGame($game, $filedata, $time, $uplay1, $uplay2);
 
     $ll = $sizemap * $sizemap;
     for ($i = 0; $i < $ll; $i++) {
@@ -440,6 +452,7 @@ function stats($game, $filedata = 'data.txt', $fileconfig1 = 'config1.txt', $fil
     } else {
         $shipname = shipName($uplay2);
     }
+   
     echo "<b>{$shipname}</b> là tàu chiến thắng!!!";
     // echo $game->Draw();
 

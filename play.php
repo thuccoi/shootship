@@ -68,7 +68,7 @@ $ship2s = $replay->ship2;
 
     foreach ($times as $time) {
         ?>
-        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&ship1=<?= $uplay1 ?>&ship2=<?= $uplay2 ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>" ><?= $time ?></a>
+        <a style="padding: 10px;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>" ><?= $time ?></a>
         <?php
     }
     ?>
