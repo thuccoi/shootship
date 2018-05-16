@@ -2,7 +2,7 @@
 include 'war.php';
 if (isset($_POST['ship1']) && isset($_POST['ship2']) && isset($_POST['sizemap']) && isset($_POST['speed'])) {
     if ($_POST['ship1'] && $_POST['ship2']) {
-        echo "<script type='text/javascript'>window.open('/ship/play.php?ship1=" . $_POST['ship1'] . "&ship2=" . $_POST['ship2'] . "&sizemap=" . $_POST['sizemap'] . "&speed=" . $_POST['speed'] . "', '_blank');</script>";
+        echo "<script type='text/javascript'>window.open('play.php?ship1=" . $_POST['ship1'] . "&ship2=" . $_POST['ship2'] . "&sizemap=" . $_POST['sizemap'] . "&speed=" . $_POST['speed'] . "', '_blank');</script>";
     }
 }
 ?>

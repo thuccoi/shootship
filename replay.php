@@ -3,10 +3,10 @@ include 'war.php';
 
 
 if (!isset($_GET['time']) || !isset($_GET['sizemap']) || !isset($_GET['speed'])) {
-    echo '<a href="/ship">Hãy chọn cấu hình trước </a>';
+    echo '<a href="index.php">Hãy chọn cấu hình trước </a>';
     exit;
 }
-
+$speed = $_GET['speed'];
 $time = $_GET['time'];
 if ($time > 0) {
 
