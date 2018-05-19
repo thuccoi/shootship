@@ -1,374 +1,385 @@
 <?php
 
-//File
-function dat_getData($file = "data.txt") {
-    $inputfile = [];
-    $handle = fopen($file, "r");
-    if ($handle) {
-        while (($line = fgets($handle)) !== false) {
-            $line = str_replace('0', '*', $line);
-            $cv = array_map('trim', array_filter(explode(' ', $line)));
-            $arr = [];
-            foreach ($cv as $v) {
-                if ($v) {
-                    if ($v == '*') {
-                        $v = 0;
-                    }
-                    $arr[] = $v;
-                }
-            }
-            $inputfile[] = $arr;
-        }
-    }
+    /**
+     * @desc: Shot ship
+     * object: {map:n^2, enermy:{position, direction}, wrap:{map, scope}, shot:{0,1,2,3}}
+     */
+//include 'war.php';
+//$n = 30;
+//$file = "data.txt";
+//$player = 2;
+//$dir = (object) ['top' => 0, 'right' => 9, 'bottom' => 0, 'left' => 0];
+//$pos = (object) ['x' => 0, 'y' => 0];
+//$map = dat_initMap();
+//echo '<pre>';
 
-    fclose($handle);
-    return $inputfile;
-}
-
-//Display
-function showArea($area, $n = 10) {
-    for ($i = 0; $i < $n; $i++) {
-        for ($j = 0; $j < $n; $j++) {
-            echo $area[$i][$j] . ' ';
-        }
-        echo '<br>';
-    }
-}
-
-//Direction
-function directionGo($file, $player = 1) {
-    $steps = dat_getData($file);
-    $length = count($steps);
-    $direction = (object) [
-                'top' => 0,
-                'bottom' => 0,
-                'left' => 0,
-                'right' => 0
-    ];
-    for ($i = 0; $i < $length; $i++) {
-        if ($steps[$i][0] == $player) {
-            if ($steps[$i][1] == 'D') {
-                switch ($steps[$i][2]) {
-                    case 'T':
-                        $direction->top++;
-                        break;
-                    case 'B':
-                        $direction->bottom++;
-                        break;
-                    case 'L':
-                        $direction->left++;
-                        break;
-                    case 'R':
-                        $direction->right++;
-                        break;
-                    default :break;
-                }
+    function dat_map_k($n, $jump) {
+        $map = dat_initMap($n, 0);
+        for ($i = $jump - 1; $i < $n - $jump + 2; $i = $i + $jump) {
+            for ($j = $jump - 1; $j < $n - $jump + 2; $j = $j + $jump) {
+                $map[$i][$j] = 1;
             }
         }
+        return $map;
     }
 
-    if ($direction->top > $direction->bottom) {
-        $direction->top = $direction->top - $direction->bottom;
-        $direction->bottom = 0;
-    } else if ($direction->top < $direction->bottom) {
-        $direction->bottom = $direction->bottom - $direction->top;
-        $direction->top = 0;
-    }
-    if ($direction->left > $direction->right) {
-        $direction->left = $direction->left - $direction->right;
-        $direction->right = 0;
-    } else if ($direction->left < $direction->right) {
-        $direction->right = $direction->right - $direction->left;
-        $direction->left = 0;
-    }
-    return $direction;
-}
-
-//Area
-function initArea($n = 10, $val = 1) {
-    $area = array(array());
-    for ($i = 0; $i < $n; $i++) {
-        for ($j = 0; $j < $n; $j++) {
-            $area[$i][$j] = $val;
-        }
-    }
-    return $area;
-}
-
-function limitAreaEnermy($area, $direction_enermy, $n = 10) {
-    for ($i = 0; $i < $n; $i++) {
-        for ($j = 0; $j < $n; $j++) {
-            if ($direction_enermy->top > 0) {
-                if ($i >= $n - $direction_enermy->top) {
-                    $area[$i][$j] = 0;
-                }
-            } else if ($direction_enermy->bottom > 0) {
-                if ($i < $direction_enermy->bottom) {
-                    $area[$i][$j] = 0;
-                }
-            }
-
-            if ($direction_enermy->left > 0) {
-                if ($j >= $n - $direction_enermy->left) {
-                    $area[$i][$j] = 0;
-                }
-            } else if ($direction_enermy->right > 0) {
-                if ($j < $direction_enermy->right) {
-                    $area[$i][$j] = 0;
-                }
-            }
-        }
-    }
-    return $area;
-}
-
-//Trigger
-function countAttackTrue($file = "data.txt", $player = 2) {
-    $steps = dat_getData($file);
-    $length = count($steps);
-    $count = 0;
-    for ($i = 0; $i < $length; $i++) {
-        if ($steps[$i][0] == $player && $steps[$i][4] == 'T') {
-            $GLOBALS['first_id'] = $i;
-//            print_r($i);
-            $count ++;
-        }
-    }
-    return $count;
-}
-
-function setFirstPossisionEnermyAttackTrue($file = "data.txt", $player = 2) {
-    $enermy = $player % 2 + 1;
-    if (!isset($GLOBALS['dat_enermy_pos'])) {
-        $pos = (object) [
-                    'x' => -1,
-                    'y' => -1
+//=============Init
+    function dat_option($pos) {
+        return [
+            (object) ['x' => $pos->x - 1, 'y' => $pos->y + 1],
+            (object) ['x' => $pos->x + 1, 'y' => $pos->y + 1],
+            (object) ['x' => $pos->x + 1, 'y' => $pos->y - 1],
+            (object) ['x' => $pos->x - 1, 'y' => $pos->y - 1],
+            (object) ['x' => $pos->x - 1, 'y' => $pos->y],
+            (object) ['x' => $pos->x, 'y' => $pos->y + 1],
+            (object) ['x' => $pos->x + 1, 'y' => $pos->y],
+            (object) ['x' => $pos->x, 'y' => $pos->y - 1],
+            (object) ['x' => $pos->x - 2, 'y' => $pos->y],
+            (object) ['x' => $pos->x, 'y' => $pos->y + 2],
+            (object) ['x' => $pos->x + 2, 'y' => $pos->y],
+            (object) ['x' => $pos->x, 'y' => $pos->y - 2],
+            (object) ['x' => $pos->x - 2, 'y' => $pos->y + 1],
+            (object) ['x' => $pos->x - 1, 'y' => $pos->y + 2],
+            (object) ['x' => $pos->x + 1, 'y' => $pos->y + 2],
+            (object) ['x' => $pos->x + 2, 'y' => $pos->y + 1],
+            (object) ['x' => $pos->x + 2, 'y' => $pos->y - 1],
+            (object) ['x' => $pos->x + 1, 'y' => $pos->y - 2],
+            (object) ['x' => $pos->x - 1, 'y' => $pos->y - 2],
+            (object) ['x' => $pos->x - 2, 'y' => $pos->y - 1],
+            (object) ['x' => $pos->x - 2, 'y' => $pos->y + 2],
+            (object) ['x' => $pos->x + 2, 'y' => $pos->y + 2],
+            (object) ['x' => $pos->x + 2, 'y' => $pos->y - 2],
+            (object) ['x' => $pos->x - 2, 'y' => $pos->y - 2]
         ];
-        $steps = dat_getData($file);
+    }
+
+    function dat_checkError($file = "data.txt", $player = 2) {
+        $steps = getData($file);
         $length = count($steps);
-        $flag = 0;
-        if (countAttackTrue($file, $player) == 1) {
-            $length = dat_getData($file);
-            for ($i = 0; $i < $length; $i++) {
-                if ($steps[$i][0] == $player && $steps[$i][4] == 'T') {
-                    $flag = $i;
-                    $pos = (object) [
-                                'x' => $steps[$i][2],
-                                'y' => $steps[$i][3]
-                    ];
-                    $GLOBALS['dat_enermy_pos'] = $pos;
-                    return true;
+        $before = null;
+        $present = null;
+        for ($i = 2; $i < $length; $i++) {
+            if ($steps[$i][0] == $player && $steps[$i - 2][0] == $player) {
+                if ($steps[$i][1] == 'A' && $steps[$i - 2][1] == 'A') {
+                    if ($steps[$i][2] == $steps[$i - 2][2] && $steps[$i][3] == $steps[$i - 2][3]) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
 
-    return true;
-}
-
-function setScopeEnermyFirstAttackTrue($n = 10, $file = "data.txt", $player = 2) {
-    $pos = $GLOBALS['dat_enermy_pos'];
-    if (!isset($GLOBALS['dat_enermy_scope'])) {
-        $GLOBALS['dat_enermy_scope'] = initArea($n);
+//=============Map
+    function dat_initMap($n = 10, $val = 1) {
+        $map = array(array());
         for ($i = 0; $i < $n; $i++) {
             for ($j = 0; $j < $n; $j++) {
-                if ($i < $pos->x - 2 || $i > $pos->x + 2 || $j < $pos->y - 2 || $j > $pos->y + 2) {
-                    $GLOBALS['dat_enermy_scope'][$i][$j] = 0;
-                    $GLOBALS['dat_enermy_scope'][$i][$j] = 0;
-                }
+                $map[$i][$j] = $val;
             }
         }
-        $GLOBALS['dat_enermy_scope_bak'] = $GLOBALS['dat_enermy_scope'];
-        return true;
-    }
-}
-
-function moveScope($direction, $n = 10) {
-    $scope = $GLOBALS['dat_enermy_scope'];
-    $pos = $GLOBALS['dat_enermy_pos'];
-    $temp_scope = initArea($n, 0);
-    $new_pos = $pos;
-    switch ($direction) {
-        case 'T':
-            if ($new_pos->x > 0) {
-                $new_pos->x = $new_pos->x - 1;
-            }
-            break;
-        case 'B':
-            if ($new_pos->x < $n) {
-                $new_pos->x = $new_pos->x + 1;
-            }
-            break;
-        case 'L':
-            if ($new_pos->y > 0) {
-                $new_pos->y = $new_pos->y - 1;
-            }
-            break;
-        case 'R':
-            if ($new_pos->y < $n) {
-                $new_pos->y = $new_pos->y + 1;
-            }
-            break;
-        default :
-            break;
+        return $map;
     }
 
-    for ($i = 0; $i < $n; $i++) {
-        for ($j = 0; $j < $n; $j++) {
-            if ($i >= $new_pos->x - 2 && $i <= $new_pos->x + 2 && $j >= $new_pos->y - 2 && $j <= $new_pos->y + 2) {
-                if ($direction == 'T') {
-                    if (isset($scope[$i + 1][$j])) {
-                        $temp_scope[$i][$j] = $scope[$i + 1][$j];
-                    } else {
-                        $temp_scope[$i][$j] = 0;
-                    }
-                } else
-                if ($direction == 'B') {
-                    if (isset($scope[$i - 1][$j])) {
-                        $temp_scope[$i][$j] = $scope[$i - 1][$j];
-                    } else {
-                        $temp_scope[$i][$j] = 0;
-                    }
-                } else
-                if ($direction == 'L') {
-                    if (isset($scope[$i][$j + 1])) {
-                        $temp_scope[$i][$j] = $scope[$i][$j + 1];
-                    } else {
-                        $temp_scope[$i][$j] = 0;
-                    }
-                } else
-                if ($direction == 'R') {
-                    if (isset($scope[$i][$j - 1])) {
-                        $temp_scope[$i][$j] = $scope[$i][$j - 1];
-                    } else {
-                        $temp_scope[$i][$j] = 0;
-                    }
-                }
+    function dat_showMap($map, $n = 10) {
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                echo $map[$i][$j] . ' ';
             }
+            echo '<br>';
         }
     }
 
-    $GLOBALS['dat_enermy_pos'] = $new_pos;
-    $GLOBALS['dat_enermy_scope'] = $temp_scope;
-}
-
-function changeScopeEnermyWhenMove($n = 10, $file = "data.txt", $player = 2) {
-    $enermy = $player % 2 + 1;
-    $steps = dat_getData($file);
-    $length = count($steps);
-    $flag = 0;
-    for ($i = $length - 1; $i < $length; $i++) {
-        if ($flag == 0) {
-            if ($steps[$i][0] == $player && $steps[$i][4] == 'T') {
-                $flag = 1;
+//=============Enermy
+    function dat_positionEnermy($file = "data.txt", $player = 2) {
+        $enermy = $player % 2 + 1;
+        $steps = getData($file);
+        $length = count($steps);
+        $count = 0;
+        $pos = null;
+        for ($i = 0; $i < $length; $i++) {
+            //player fire true
+            if ($steps[$i][0] == $player && $steps[$i][1] == 'A' && isset($steps[$i][4]) && $steps[$i][4] == 'T') {
+                $count ++;
+                $pos = (object) ['x' => $steps[$i][2], 'y' => $steps[$i][3]];
+                break;
             }
+        }
+        return $pos;
+    }
+
+    function dat_positionEnermySub($file = "data.txt", $player = 2) {
+        $enermy = $player % 2 + 1;
+        $steps = getData($file);
+        $length = count($steps);
+        $count = 0;
+        $pos = null;
+        for ($i = 0; $i < $length; $i++) {
+            //player fire true
+            if ($steps[$i][0] == $player && $steps[$i][1] == 'A' && isset($steps[$i][4]) && $steps[$i][4] == 'T') {
+                $count ++;
+                $pos = (object) ['x' => $steps[$i][2], 'y' => $steps[$i][3]];
+            }
+        }
+        return $pos;
+    }
+
+    function dat_directionEnermyMap($file = "data.txt", $player = 2) {
+        $enermy = $player % 2 + 1;
+        $steps = getData($file);
+        $length = count($steps);
+        $direction = (object) [
+                    'top' => 0,
+                    'bottom' => 0,
+                    'left' => 0,
+                    'right' => 0
+        ];
+        for ($i = 0; $i < $length; $i++) {
+            if ($steps[$i][0] == $enermy) {
+                if ($steps[$i][1] == 'D') {
+                    switch ($steps[$i][2]) {
+                        case 'T':
+                            $direction->top++;
+                            break;
+                        case 'B':
+                            $direction->bottom++;
+                            break;
+                        case 'L':
+                            $direction->left++;
+                            break;
+                        case 'R':
+                            $direction->right++;
+                            break;
+                        default :break;
+                    }
+                }
+            }
+        }
+
+        if ($direction->top > $direction->bottom) {
+            $direction->top = $direction->top - $direction->bottom;
+            $direction->bottom = 0;
+        } else if ($direction->top < $direction->bottom) {
+            $direction->bottom = $direction->bottom - $direction->top;
+            $direction->top = 0;
         } else {
-            if ($steps[$i][0] == $enermy && $steps[$i][1] == 'D') {
-                moveScope($steps[$i][2], $n);
-            }
+            $direction->top = $direction->bottom = 0;
         }
-    }
-}
-
-//Solve---------------------
-function fullAttack($file = "data.txt", $player = 2, $n = 10) {
-    $enermy_index = $player % 2 + 1;
-
-    $area = initArea();
-
-    $direction_enermy = directionGo($file, $enermy_index);
-    $limit_area = limitAreaEnermy($area, $direction_enermy);
-    for ($x = 0; $x < $n; $x++) {
-        for ($y = 0; $y < $n; $y++) {
-            if ($limit_area[$x][$y] == 1) {
-                return "A {$x} {$y}";
-            }
-        }
-    }
-    $x = rand(0, $n - 1);
-    $y = rand(0, $n - 1);
-    return "A {$x} {$y}";
-}
-
-function sinceAttackTrue($n = 10, $file = "data.txt", $player = 2) {
-    $steps = dat_getData($file);
-    $length = count($steps);
-    if (!isset($GLOBALS['dat_flag'])) {
-        $count = countAttackTrue($file = "data.txt", $player = 2);
-        if ($count >= 1) {
-            $GLOBALS['dat_flag'] = 1;
+        if ($direction->left > $direction->right) {
+            $direction->left = $direction->left - $direction->right;
+            $direction->right = 0;
+        } else if ($direction->left < $direction->right) {
+            $direction->right = $direction->right - $direction->left;
+            $direction->left = 0;
         } else {
-            if (isset($GLOBALS['arr_op'])) {
-                for ($i = 0; $i < count($GLOBALS['arr_op']); $i++) {
-                    if ($GLOBALS['arr_op'][$i]->status == 1) {
-                        return 'A ' . $GLOBALS['arr_op'][$i]->x . ' ' . $GLOBALS['arr_op'][$i]->y;
+            $direction->left = $direction->right = 0;
+        }
+        return $direction;
+    }
+
+    function dat_directionEnermyScope($file = "data.txt", $player = 2) {
+        $enermy = $player % 2 + 1;
+        $steps = getData($file);
+        $length = count($steps);
+        $count = 0;
+        $dir = (object) ['top' => 0, 'right' => 0, 'bottom' => 0, 'left' => 0];
+        for ($i = 0; $i < $length; $i++) {
+            //player fire true
+            if ($steps[$i][0] == $player && $steps[$i][1] == 'A' && isset($steps[$i][4]) && $steps[$i][4] == 'T') {
+                $count ++;
+            }
+            //enermy move
+            if ($count >= 1) {
+                if ($steps[$i][0] == $enermy && $steps[$i][1] == 'D' && isset($steps[$i][2])) {
+                    $d = $steps[$i][2];
+                    if ($d == 'T') {
+                        $dir->top++;
+                    } else if ($d == 'R') {
+                        $dir->right++;
+                    } else if ($d == 'B') {
+                        $dir->bottom++;
+                    } else if ($d == 'L') {
+                        $dir->left++;
                     }
                 }
             }
-
-            return fullAttack();
         }
+        //convert enermy move.
+        if ($dir->top > $dir->bottom) {
+            $dir->top = $dir->top - $dir->bottom;
+            $dir->bottom = 0;
+        } else if ($dir->top < $dir->bottom) {
+            $dir->bottom = $dir->bottom - $dir->top;
+            $dir->top = 0;
+        } else {
+            $dir->top = $dir->bottom = 0;
+        }
+        if ($dir->right > $dir->left) {
+            $dir->right = $dir->right - $dir->left;
+            $dir->left = 0;
+        } else if ($dir->right < $dir->left) {
+            $dir->left = $dir->left - $dir->right;
+            $dir->right = 0;
+        } else {
+            $dir->right = $dir->left = 0;
+        }
+        return $dir;
     }
-    if ($GLOBALS['dat_flag'] >= 1) {
-        if (!isset($GLOBALS['dat_begin_attack'])) {
-            $GLOBALS['dat_begin_attack'] = 1;
-            //$GLOBALS['dat_enermy_pos'] = 
-            setFirstPossisionEnermyAttackTrue($file, $player);
-            //$GLOBALS['dat_enermy_scope'] = 
-            setScopeEnermyFirstAttackTrue($n = 10, $file, $player);
-        }
-        changeScopeEnermyWhenMove($n = 10, $file = "data.txt", $player = 2);
 
-        $enermy_index = $player % 2 + 1;
-        $area = initArea();
-        $direction_enermy = directionGo($file, $enermy_index);
-        $limit_area = limitAreaEnermy($area, $direction_enermy);
-
-        $arr_posible = [];
-        for ($x = 0; $x < $n; $x++) {
-            for ($y = 0; $y < $n; $y++) {
-                if ($limit_area[$x][$y] == 1 && ($GLOBALS['dat_enermy_scope'][$x][$y] == 1)) {
-                    $arr_posible[] = (object) ['x' => $x, 'y' => $y];
+//=============Wrap
+    function dat_limitMap($map, $dir, $n = 10) {
+        if ($dir->top > 0) {
+            for ($i = $n - $dir->top; $i < $n; $i++) {
+                for ($j = 0; $j < $n; $j++) {
+                    $map[$i][$j] = 0;
+                }
+            }
+        } else if ($dir->bottom > 0) {
+            for ($i = 0; $i < $dir->bottom; $i++) {
+                for ($j = 0; $j < $n; $j++) {
+                    $map[$i][$j] = 0;
                 }
             }
         }
 
-        if ($arr_posible) {
-            $rand = rand(0, count($arr_posible));
-            $GLOBALS['dat_enermy_scope'][$arr_posible[$rand]->x][$arr_posible[$rand]->y] = 0;
-            return "A {$arr_posible[$rand]->x} {$arr_posible[$rand]->y}";
-        } else {
-            return fullAttack();
-        }
-    }
-}
-
-//Trick
-function checkNoOptionGlobal($n = 0) {
-    for ($i = 0; $i < $n; $i++) {
-        for ($j = 0; $j < $n; $j++) {
-            if ($GLOBALS[$i][$j] == 1) {
-                return false;
+        if ($dir->right > 0) {
+            for ($i = 0; $i < $n; $i++) {
+                for ($j = 0; $j < $dir->right; $j++) {
+                    $map[$i][$j] = 0;
+                }
+            }
+        } else if ($dir->left > 0) {
+            for ($i = $n - $dir->left; $i < $n; $i++) {
+                for ($j = 0; $j < $n; $j++) {
+                    $map[$i][$j] = 0;
+                }
             }
         }
+
+        return $map;
     }
-    return true;
-}
+
+    function dat_limitScope($pos, $dir, $n = 10) {
+        $area = dat_initMap($n);
+    }
+
+    function dat_gridMapAbsolute($file = "data.txt", $player = 2, $n = 10) {
+        $enermy = $player % 2 + 1;
+        $map = dat_initMap($n);
+        $step = getData($file);
+        $length = count($step);
+        $top = $right = $bottom = $left = 0;
+        for ($i = 0; $i < $length; $i++) {
+            if ($step[$i][0] == $enermy && $step[$i][1] = 'D') {
+                if (isset($step[$i][2])) {
+                    if ($step[$i][2] == 'T') {
+                        $top++;
+                    } else if ($step[$i][2] == 'R') {
+                        $right++;
+                    } else if ($step[$i][2] == 'B') {
+                        $bottom++;
+                    } else if ($step[$i][2] == 'L') {
+                        $left++;
+                    }
+                }
+            }
+            if ($step[$i][0] == $player && $step[$i][1] == 'A') {
+                $x = $step[$i][2];
+                $y = $step[$i][3];
+                if (isset($x) && isset($y)) {
+                    $map[$x + $top - $bottom][$y - $right + $left] = 0;
+                }
+            }
+        }
+        return $map;
+    }
+
+//$pos = dat_positionEnermy($file, $player);
+//print_r($pos);
+//print_r($dir);
+////$map = dat_limitMap($map, $dir, $n);
+//$map = dat_gridMapAbsolute($file, $player, $n);
+//dat_showMap($map);
+//$map = dat_limitMap($map, $dir);
+//dat_showMap($map);
+//exit;
+//=============Random shoot.
+    function dat_funnyAttack($n = 10) {
+        $x = rand(0, $n - 1);
+        $y = rand(0, $n - 1);
+        return "A {$x} {$y}";
+    }
+
+    function dat_randomAttack($file = "data.txt", $player = 2, $n = 10) {
+        $grid_map_abs = dat_gridMapAbsolute($file, $player, $n);
+        $map1 = dat_map_k($n, 1);
+        $map2 = dat_map_k($n, 2);
+        $map3 = dat_map_k($n, 3);
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if ($map3[$i][$j] == 1 && $grid_map_abs[$i][$j] == 1) {
+                    return "A {$i} {$j}";
+                }
+            }
+        }
+
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if ($map2[$i][$j] == 1 && $grid_map_abs[$i][$j] == 1) {
+                    return "A {$i} {$j}";
+                }
+            }
+        }
+
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = 0; $j < $n; $j++) {
+                if ($map1[$i][$j] == 1 && $grid_map_abs[$i][$j] == 1) {
+                    return "A {$i} {$j}";
+                }
+            }
+        }
+
+        return dat_funnyAttack($n);
+    }
+
+//$some = dat_randomAttack($file, $player, $n);
+//print_r($some);
+//=============Shot
+    function dat_stupidAttack($file = "data.txt", $player = 2, $n = 10) {
+        $pos = dat_positionEnermy($file, $player);
+        if (!isset($pos)) {
+            return dat_randomAttack($file, $player, $n);
+        }
+        if (dat_checkError($file, $player)) {
+            return dat_funnyAttack($n);
+        }
+        $grid_map_abs = dat_gridMapAbsolute($file, $player, $n);
+        $option = dat_option($pos);
+        $length = count($option);
+        for ($i = 0; $i < $length; $i++) {
+            if ($option[$i]->x >= 0 && $option[$i]->x < $n && $option[$i]->y >= 0 && $option[$i]->y < $n) {
+                if ($grid_map_abs[$option[$i]->x][$option[$i]->y] == 1) {
+                    return "A {$option[$i]->x} {$option[$i]->y}";
+                }
+            }
+        }
+
+        $x_i = ($pos->x - 2) >= 0 ? ($pos->x - 2) : 0;
+        $x_s = ($pos->x + 2) < $n ? ($pos->x + 2) : $n;
+        $y_i = ($pos->y - 2) >= 0 ? ($pos->y - 2) : 0;
+        $y_s = ($pos->y + 2) < $n ? ($pos->y + 2) : $n;
+        for ($i = $x_i; $i < $x_s; $i++) {
+            for ($j = $y_i; $j < $y_s; $j++) {
+                if ($grid_map_abs[$i][$j] == 1) {
+                    return "A {$i} {$j}";
+                }
+            }
+        }
+        return dat_funnyAttack($n);
+    }
 
 //Sumary=================================
-function solveDat($file = "data.txt", $player = 2, $n = 10) {
-    return fullAttack($file, $player, $n);
-    if ($n == 10) {
-        $GLOBALS['arr_op'] = [
-            (object) ['status' => 1, 'x' => 2, 'y' => 2],
-            (object) ['status' => 1, 'x' => 2, 'y' => 8],
-            (object) ['status' => 1, 'x' => 5, 'y' => 2],
-            (object) ['status' => 1, 'x' => 5, 'y' => 8],
-            (object) ['status' => 1, 'x' => 7, 'y' => 2],
-            (object) ['status' => 1, 'x' => 7, 'y' => 8]
-        ];
+    function solveDat($file = "data.txt", $player = 2, $n = 10, $uplay = 'thor') {
+        return dat_stupidAttack($file, $player, $n);
     }
-
-    return sinceAttackTrue($n, $file, $player);
-}
+    

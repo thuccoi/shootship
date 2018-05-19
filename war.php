@@ -488,7 +488,7 @@
             $shipname = shipName($uplay2);
         }
 
-        echo "<b>{$shipname}</b> là tàu chiến thắng!!!";
+        echo "<b style='color:red'>{$shipname}</b> là tàu chiến thắng!!!";
         // echo $game->Draw();
 
         $inputdata = getData($filedata);
@@ -510,12 +510,12 @@
             return $sum;
         }, (object) ['ship1_A' => 0, 'ship2_A' => 0, 'ship1_D' => 0, 'ship2_D' => 0]);
 
-        echo "<p>Tàu 1 bắn hết: {$nums->ship1_A} phát</p>";
-        echo "<p>Tàu 2 bắn hết: {$nums->ship2_A} phát</p>";
+        echo "<p>Tàu <b style='color:#2196F3'>" . shipName($uplay1) . "</b> bắn hết: {$nums->ship1_A} phát</p>";
+        echo "<p>Tàu <b style='color:#4CAF50'>" . shipName($uplay2) . "</b> bắn hết: {$nums->ship2_A} phát</p>";
 
 
-        echo "<p>Tàu 1 chạy: {$nums->ship1_D} bước</p>";
-        echo "<p>Tàu 2 chạy: {$nums->ship2_D} bước</p>";
+        echo "<p>Tàu <b style='color:#2196F3'>" . shipName($uplay1) . "</b> chạy: {$nums->ship1_D} bước</p>";
+        echo "<p>Tàu <b style='color:#4CAF50'>" . shipName($uplay2) . "</b> chạy: {$nums->ship2_D} bước</p>";
 
         echo "<pre>";
         if ($replay == FALSE) {

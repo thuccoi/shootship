@@ -2,7 +2,7 @@
 function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
     $allSteps = [];
     $board = [];    // nxn array
-    
+
 
     $hf_vals = (object) [
         "const_SIZE" => $sizemap,    // should we take it as parameter?!
@@ -12,16 +12,18 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
         "const_MOVERIGHT" => 8,
         "my_order" => $player,
         "const_DAMAGE" => 200,
+        "const_WIND" => (28 + (int) ($sizemap / 6) ),
         "stscore" => 0,   // strategic score
         "mc" => 3.1,  // mine
         "oc" => 3,  // opposite
-        "cc" => 1,  // common
+        "cc" => 2,  // common
         "mh" => 0,  // my hits count
         "oh" => 0,   // opposite hits count
         "redflags" => [],
         "blackflags" => [],
         "myshots" => [],
-        "theirshots" => []
+        "theirshots" => [],
+        "run_for_life" => 0
     ];
 
     $hf_init = function(&$board, &$hf_vals) {
@@ -61,7 +63,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             fclose($handle);
         } else {
             // error opening the file.
-        } 
+        }
     };
 
     $hf_getNeighbors = function($idx) use ($hf_vals) {
@@ -69,7 +71,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
         $r = [];
         $y = (int) $idx % $hf_vals->const_SIZE;
         $x = (int) (($idx - $y) / $hf_vals->const_SIZE);
-        
+
         if ($x > 0 && $y > 0) {
             $idx_1 = $idx - $hf_vals->const_SIZE - 1;
             if ($idx_1 >= 0) {
@@ -84,7 +86,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             }
         }
 
-        if ($x < 9 && $y > 0) {
+        if ($x < ($hf_vals->const_SIZE - 1) && $y > 0) {
             $idx_3 = $idx + $hf_vals->const_SIZE - 1;
             if ($idx_3 >= 0) {
                 $r[] = $idx_3;
@@ -98,7 +100,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             }
         }
 
-        if ($x < 9) {
+        if ($x < $hf_vals->const_SIZE) {
             $idx_5 = $idx + $hf_vals->const_SIZE;
             if ($idx_5 < $ssize) {
                 $r[] = $idx_5;
@@ -112,6 +114,13 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             }
         }
 
+        if ($y < ($hf_vals->const_SIZE - 1) && $x > 0) {
+            $idx_6 = $idx - $hf_vals->const_SIZE + 1;
+            if ($idx_6 >= 0) {
+                $r[] = $idx_6;
+            }
+        }
+
         if ($y < 9) {
             $idx_7 = $idx + 1;
             if ($idx_7 < $ssize) {
@@ -119,7 +128,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             }
         }
 
-        if ($x < 9 && $y < 9) {
+        if ($x < ($hf_vals->const_SIZE - 1) && $y < ($hf_vals->const_SIZE - 1)) {
             $idx_8 = $idx + $hf_vals->const_SIZE + 1;
             if ($idx_8 < $ssize) {
                 $r[] = $idx_8;
@@ -154,7 +163,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                             $hf_retouchNeighbors($new_val, $board, 1);
                         }
                     }
-                    
+
                     if ($change_score) {
                         $board[$old_val] -= $change_score;
                         if ($new_val >= 0) {
@@ -247,7 +256,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                 if ($move->attack) {
                     $idx = $move->x * $hf_vals->const_SIZE + $move->y;
                     $hf_vals->myshots[] = $idx;
-    
+
                     if ($move->on_target == 1) {    // hooray, we hit them
                         $hf_vals->mh++;
                         // mark this cells damaged
@@ -257,12 +266,15 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                         // save it
                         $hf_vals->redflags[] = $idx;
                     } else {
-                        $board[$idx] -= 3;
+                        if ($idx >= 0 && $idx < $ssize) {
+                            $board[$idx] -= 3;
+                        }
                     }
                 } else {
                     // keep running, man
                     // revise black flags
                     if (count($hf_vals->blackflags)) {
+                        $hf_vals->run_for_life++;
                         $hf_refineFlags($move->direction, $hf_vals->blackflags, $board, false, false);
                     }
                 }
@@ -270,7 +282,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                 if ($move->attack) {
                     $idx = $move->x * $hf_vals->const_SIZE + $move->y;
                     $hf_vals->theirshots[] = $idx;
-    
+
                     if ($move->on_target == 1) {    // fuck, we get hit right on the face
                         $hf_vals->oh++;
                         // mark this as water
@@ -279,6 +291,9 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                         $hf_vals->blackflags[] = $idx;
                     } else {
                         // simple ignore because they missed
+                        if ($idx >= 0 && $idx < $ssize) {
+                            $board[$idx] -= 0.1;
+                        }
                     }
                 } else {
                     // revise red flags
@@ -296,9 +311,67 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
             $hf_vals->stscore += $i/$ssize;
         }
     };
-    
-    $hf_makeDecision = function(&$board, &$allSteps) use ($hf_vals, $hf_getNeighbors) {
-        if ($hf_vals->stscore >= 0) {
+
+    $hf_randomWalk = function(&$board, &$allSteps) use ($hf_vals, $hf_getNeighbors) {
+        $s = count($allSteps) + 6;
+        if (count($hf_vals->blackflags) > 0) {
+            if ($hf_vals->run_for_life < 3) {
+                return rand(1, 4);
+            }
+            $t = $hf_vals->run_for_life + 1;
+            if ($s % $t != 0) {
+                return 0;
+            }
+        } else {
+            if ($s % $hf_vals->const_WIND != 0) {
+                return 0;
+            }
+        }
+
+        $rnd = rand(0, 666);
+        $r = $rnd % 5;
+        if ($r == 1) {
+            return $hf_vals->const_MOVEUP;
+        } else if ($r == 2) {
+            return $hf_vals->const_MOVEDOWN;
+        } else if ($r == 3) {
+            return $hf_vals->const_MOVELEFT;
+        } else if ($r == 4) {
+            return $hf_vals->const_MOVERIGHT;
+        }
+        return 0;
+    };
+
+    $hf_CanIgnored = function($idx) use ($hf_vals, $hf_getNeighbors) {
+        $ssize = $hf_vals->const_SIZE * $hf_vals->const_SIZE;
+        $y = (int) $idx % $hf_vals->const_SIZE;
+        $x = (int) (($idx - $y) / $hf_vals->const_SIZE);
+
+        if ($x % 3 == 2) {
+            return 0;
+        }
+
+        if ($x % 3 == 0) {
+            if ($y % 2 == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+
+        if ($x %3 == 1) {
+            if ($y % 2 == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    };
+
+    $hf_makeDecision = function(&$board, &$allSteps) use ($hf_vals, $hf_getNeighbors, $hf_randomWalk, $hf_CanIgnored) {
+        $ssize = $hf_vals->const_SIZE * $hf_vals->const_SIZE;
+        $ds = $hf_randomWalk($board, $allSteps);
+        if ($ds == 0) {
             // Attack them NOW!!!
             $idx = 0;
             if (count($hf_vals->redflags)) {
@@ -314,7 +387,7 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                 }
                 $hotScores = [];
                 foreach ($hotPoints as $h) {
-                    if ($board[$h] > 9 && $board[$h] < 100) {
+                    if ($board[$h] > 7.5 && $board[$h] < 100) {
                         $hotScores[$h] = $board[$h];
                     }
                 }
@@ -338,14 +411,25 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
                 }
             } else {
                 // better random in all board;
+                // $cluster_rem = (count($allSteps) % 4);
                 $allUncheckPoints = array_filter($board, function($e) {
                     return $e > 9;
                 });
-                if (!count($allUncheckPoints)) {
-                    $idx = array_rand($board);
-                } else {
-                    $idx = array_rand($allUncheckPoints);
-                }
+
+                // $cluster_start = (int) ceil($ssize / 4) * $cluster_rem;
+                // $cluster_end = (int) ceil($ssize / 4) * ($cluster_rem + 1);
+
+                do {
+                    if (!count($allUncheckPoints)) {
+                        $idx = array_rand($board);
+                    } else {
+                        $idx = array_rand($allUncheckPoints);
+                    }
+                    if ($hf_CanIgnored($idx) == 0) {
+                        break;
+                    }
+                } while (true);
+                
             }
 
             $y = (int) $idx % $hf_vals->const_SIZE;
@@ -354,14 +438,13 @@ function solveHardy($file_data = "data.txt", $player, $sizemap = 10) {
         } else {
             // Run! Hardy, RUNNNN
             $dir = 'T';
-            $r = rand(0, 4);
-            if ($r == 0) {
+            if ($ds == $hf_vals->const_MOVEUP) {
                 $dir = 'T';
-            } elseif ($r == 1) {
+            } elseif ($ds == $hf_vals->const_MOVELEFT) {
                 $dir = 'L';
-            } elseif ($r == 2) {
+            } elseif ($ds == $hf_vals->const_MOVEDOWN) {
                 $dir = 'B';
-            } elseif ($r == 3) {
+            } elseif ($ds == $hf_vals->const_MOVERIGHT) {
                 $dir = 'R';
             }
             return "D {$dir}";
