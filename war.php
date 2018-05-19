@@ -385,9 +385,7 @@
                     if (isset($solve1[1])) {
                         if ($game->moveShip1($solve1[1])) {
                             $dir = trueDirection($solve1[1]);
-                            if ($dir != FALSE) {
-                                writeDefense(1, $dir, $filedata);
-                            }
+                            writeDefense(1, $dir, $filedata);
                         }
                     }
                 }
@@ -418,10 +416,8 @@
                 } elseif ($solve2[0] == 'D') {
                     if (isset($solve2[1])) {
                         if ($game->moveShip2($solve2[1])) {
-                            $dir = trueDirection($solve1[1]);
-                            if ($dir != FALSE) {
-                                writeDefense(2, $dir, $filedata);
-                            }
+                            $dir = trueDirection($solve2[1]);
+                            writeDefense(2, $dir, $filedata);
                         }
                     }
                 }
@@ -589,11 +585,11 @@
             ?>
             <a style="padding: 10px; border: 1px solid #ccc; display: block;" target="_blank" href="replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>">
                 Trận <?= $ll - $idx ?>:
-                <?= shipName($uplay1) . " & " . shipName($uplay2) ?>
+            <?= shipName($uplay1) . " & " . shipName($uplay2) ?>
             </a>
-            <?php
-        }
-        ?>
+                <?php
+            }
+            ?>
         <div style="margin-bottom: 200px;"></div>
         <?php
     }
