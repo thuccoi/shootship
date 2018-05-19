@@ -552,7 +552,7 @@ function history($speed) {
         $uplay1 = $gtcf->uplay1;
         $uplay2 = $gtcf->uplay2;
         ?>
-        <a style="padding: 10px; border: 1px solid #ccc; display: block;" target="_blank" href="/ship/replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>">
+        <a style="padding: 10px; border: 1px solid #ccc; display: block;" target="_blank" href="replay.php?time=<?= $time ?>&sizemap=<?= $sizemap ?>&speed=<?= $speed ?>">
             Trận <?= $ll - $idx ?>:
             <?= shipName($uplay1) . " & " . shipName($uplay2) ?>
         </a>
